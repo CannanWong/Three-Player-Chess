@@ -1,0 +1,44 @@
+
+//1-set up board and place pieces
+
+//2-get player
+
+//3-is game over
+//4-if no get player input
+//5-if yes end game
+
+//6-get playerinput
+
+//7-show piece valid moves
+
+//8-move piece
+//9-if no go to get playerinput
+//10-if yes go to domove
+
+//11-do move
+
+//12-go to get player
+
+//13-end game
+
+//1.create 3 2d arrays with struct region create and set pieces positions on the board and set to which player they belong then set starting player
+//2.get which players turn it is by iterating through the circular linked list check and rotate 
+//3.check for checkmate by seeing if current player has king check for stalemate if there are only three kings left or if current player has no available moves check for draw if all three players have agreed to draw
+//4.if game is not over allow for player input e.g click from player
+//5.go to endgame
+//6.if the game is not over, then receive player input e.g mouse click
+//7.find which piece was clicked on and display the pieces valid moves
+//8.if a valid move is clicked then move the piece to the position of the click
+//9.if no go back to 6 getting player input
+//10.move piece moving/taking/castling
+//11.as 10 says
+//12.go back to 2 get player
+//13.if game ended in checkmate give the winner 1 point the loser 0 and the other 0.5, if stalemate or draw give everyone 0.3 points
+
+have an a-l 1-12 coordinate system with pieces moving as they normally do in 2 player chess
+checkmate is instead delivered by taking the king in this version instead of giving check to a player with them having no available moves
+castling even if the kings path is interrupted by a check attack is now allowed as this version also allows a player to put themselves in check as it allows for teamplay
+promotion works as normal
+en passant works as normal
+50 pawn rule works as normal
+instead of draw by repetition, we will instead have a draw button where the players can agree on a draw, only a draw if all 3 players agree to it, bots automatically accept

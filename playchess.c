@@ -1,3 +1,4 @@
+#include "chess.h"
 //Game Start
 
 //set up board and place pieces
