@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #define MAX_X 8
@@ -9,6 +10,9 @@
 typedef enum {BLACK = 0, WHITE = 1, RED = 2} color;
 typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
 
+//=======================================================================================================
+
+//chess pieces
 typedef struct piece_type {
   bool single_move;
   //x then y
@@ -17,9 +21,31 @@ typedef struct piece_type {
 
 //Type definiations
 typedef struct chess_piece {  
+  color piece_color;  
   piece_type_t* type;
-  const color piece_color;
 } piece_t;
+
+typedef struct player_piece {
+  color player_color;
+  piece_t *i_pawn;
+  piece_t *o_pawn;
+  piece_t *bishop;
+  piece_t *rook;
+  piece_t *knight;
+  piece_t *queen;
+  piece_t *king;
+} player_piece_t;
+//global variables
+extern const piece_type_t i_pawn_type;
+extern const piece_type_t o_pawn_type; 
+extern const piece_type_t rook_type;
+extern const piece_type_t knight_type;
+extern const piece_type_t king_type;
+extern const piece_type_t queen_type;
+extern const piece_type_t bishop_type;
+extern const piece_t default_piece;
+
+//=======================================================================================================
 
 typedef struct chess_board {
   piece_t *black_region[MAX_X][MAX_Y];
@@ -48,14 +74,7 @@ typedef struct sequence {
 } seq_t;
 
 //Global variables
-extern const piece_type_t i_pawn_piece;
-extern const piece_type_t o_pawn_piece; 
-extern const piece_type_t rook_piece;
-extern const piece_type_t knight_piece;
-extern const piece_type_t king_piece;
-extern const piece_type_t queen_piece;
-extern const piece_type_t bishop_piece;
-extern const piece_t default_piece;
+
 extern board_t board;
 extern status game_status;
 extern seq_t curr_player;
@@ -69,6 +88,7 @@ coord_t* show_avail_move(coord_t);
 bool move_piece(coord_t, coord_t);
 bool click_draw(color);
 void terminate();
+void free_board();
 
 /*
 typedef struct piece_number_map {
