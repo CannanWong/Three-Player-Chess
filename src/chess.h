@@ -25,6 +25,7 @@ typedef struct piece_type {
 typedef struct chess_piece {  
   color piece_color;  
   piece_type_t* type;
+  bool has_moved;
 } piece_t;
 
 
