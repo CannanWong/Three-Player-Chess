@@ -6,6 +6,7 @@
 #define MAX_X 8
 #define MAX_Y 4
 #define NUM_OF_PLAYERS 3
+#define TOTAL_NUM_OF_PIECES 16
 
 //Enumerations
 typedef enum {BLACK = 0, WHITE = 1, RED = 2} color;
@@ -25,7 +26,6 @@ typedef struct piece_type {
 typedef struct chess_piece {  
   color piece_color;  
   piece_type_t* type;
-  bool has_moved;
 } piece_t;
 
 
@@ -56,6 +56,7 @@ typedef struct chess_player {
   piece_t *knight;
   piece_t *queen;
   piece_t *king;
+  bool[TOTAL_NUM_OF_PIECES] has_moved;
 } player_t;
 
 typedef struct sequence {
@@ -95,7 +96,7 @@ void initialize(char*[NUM_OF_PLAYERS]);
 piece_t get_piece(coord_t);
 bool coord_equals(coord_t, coord_t);
 coord_t move_vector(bool, coord_t, signed short, signed short);
-coord_t* show_avail_move(piece_t);
+coord_t* show_avail_move(piece_t*);
 bool move_piece(coord_t, coord_t);
 bool click_draw(player_t*);
 void terminate();
