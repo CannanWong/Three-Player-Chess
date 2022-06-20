@@ -5,6 +5,7 @@
 
 #define MAX_X 8
 #define MAX_Y 4
+#define NUM_OF_PLAYERS 3
 
 //Enumerations
 typedef enum {BLACK = 0, WHITE = 1, RED = 2} color;
@@ -13,6 +14,7 @@ typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
 //=======================================================================================================
 
 //chess pieces
+
 typedef struct piece_type {
   bool single_move;
   //x then y
@@ -25,16 +27,7 @@ typedef struct chess_piece {
   piece_type_t* type;
 } piece_t;
 
-typedef struct player_piece {
-  color player_color;
-  piece_t *i_pawn;
-  piece_t *o_pawn;
-  piece_t *bishop;
-  piece_t *rook;
-  piece_t *knight;
-  piece_t *queen;
-  piece_t *king;
-} player_piece_t;
+
 //global variables
 extern const piece_type_t i_pawn_type;
 extern const piece_type_t o_pawn_type; 
@@ -44,6 +37,36 @@ extern const piece_type_t king_type;
 extern const piece_type_t queen_type;
 extern const piece_type_t bishop_type;
 extern const piece_t default_piece;
+
+//=======================================================================================================
+
+//player 
+
+//request draw trigger interrupt
+typedef struct chess_player { 
+  bool agree_draw;
+  color player_col;
+  char *name;
+  unsigned short score;
+  piece_t *i_pawn;
+  piece_t *o_pawn;
+  piece_t *bishop;
+  piece_t *rook;
+  piece_t *knight;
+  piece_t *queen;
+  piece_t *king;
+} player_t;
+
+typedef struct sequence {
+ color curr_col;
+ struct sequence *next_player;
+} seq_t;
+
+//global variables
+extern player_t black_player;
+extern player_t white_player;
+extern player_t red_player;
+extern seq_t *curr_player;
 
 //=======================================================================================================
 
@@ -59,29 +82,15 @@ typedef struct coordinate {
   int y
 } coord_t;
 
-//request draw trigger interrupt
-typedef struct chess_player { 
-  bool agree_draw;
-  color player_col;
-  char *name;
-  unsigned short score;
-  //pc_num_map possession[NUM_PIECE_TYPES];
-} player_t;
-
-typedef struct sequence {
- color curr_col;
- struct sequence *next_player;
-} seq_t;
-
 //Global variables
-
 extern board_t board;
 extern status game_status;
-extern seq_t curr_player;
 extern unsigned short num_draw;
 
+
+
 //Functions
-void initialize();
+void initialize(char*[NUM_OF_PLAYERS]);
 piece_t get_piece(coord_t);
 bool coord_equals(coord_t, coord_t);
 coord_t move_vector(bool, coord_t, signed short, signed short);
