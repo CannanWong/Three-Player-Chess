@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <assert.h>
 
 #define MAX_X 8
 #define MAX_Y 4
@@ -7,7 +8,7 @@
 //Enumerations
 typedef enum {BLACK = 0, WHITE = 1, RED = 2} color;
 typedef enum {PAWN,BISHOP,KNIGHT,KING,QUEEN,ROOK} piece;
-typedef enum {GAME, CHECKMATE = 3, STALEMATE = 2, DRAW = 1} status;
+typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
 
 //Type definiations
 typedef struct chess_piece {  
@@ -53,7 +54,7 @@ extern unsigned short num_draw;
 //Functions
 void initialize();
 piece_t get_piece(coord_t);
-coord_t move_vector(coord_t, signed short, signed short);
+coord_t move_vector(bool, coord_t, signed short, signed short);
 coord_t* show_avail_move(coord_t);
 bool move_piece(coord_t, coord_t);
 bool click_draw(color);
