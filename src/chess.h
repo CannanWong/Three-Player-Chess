@@ -7,22 +7,24 @@
 
 //Enumerations
 typedef enum {BLACK = 0, WHITE = 1, RED = 2} color;
-typedef enum {PAWN,BISHOP,KNIGHT,KING,QUEEN,ROOK} piece;
 typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
+
+typedef struct piece_type {
+  bool single_move;
+  //x then y
+  int *(move_vec[2]);
+} piece_type_t;
 
 //Type definiations
 typedef struct chess_piece {  
-  bool single_move;
-  color piece_color;
-  piece piece_type;
-  coord_t current_coord;
-  int *(move_vecs[2]);
+  piece_type_t* type;
+  const color piece_color;
 } piece_t;
 
 typedef struct chess_board {
-  piece_t black_region[MAX_X][MAX_Y];
-  piece_t white_region[MAX_X][MAX_Y];
-  piece_t red_region[MAX_X][MAX_Y];
+  piece_t *black_region[MAX_X][MAX_Y];
+  piece_t *white_region[MAX_X][MAX_Y];
+  piece_t *red_region[MAX_X][MAX_Y];
 } board_t;
 
 typedef struct coordinate {
@@ -46,6 +48,14 @@ typedef struct sequence {
 } seq_t;
 
 //Global variables
+extern const piece_type_t i_pawn_piece;
+extern const piece_type_t o_pawn_piece; 
+extern const piece_type_t rook_piece;
+extern const piece_type_t knight_piece;
+extern const piece_type_t king_piece;
+extern const piece_type_t queen_piece;
+extern const piece_type_t bishop_piece;
+extern const piece_t default_piece;
 extern board_t board;
 extern status game_status;
 extern seq_t curr_player;
