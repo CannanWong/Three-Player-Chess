@@ -29,20 +29,18 @@ bool coord_equals(coord_t c1, coord_t c2) {
 }
 
 piece_t* get_piece(coord_t grid) {
-  piece_t ***reg;
   switch (grid.region) {
     case (WHITE){
-      reg = board.white_region;
+      return board.white_region[grid.x][grid.y];
     }
     case (BLACK){
-      reg = board.white_region;
+      return = board.white_region[grid.x][grid.y];;
     }
     default {
       assert(grid.region = RED);
-      reg = board.white_region;
+      return = board.white_region[grid.x][grid.y];;
     } 
   }
-  return board[grid.x][grid.y];
 }
 
 coord_t move_x(coord_t orig, signed short dx) {
