@@ -56,7 +56,7 @@ typedef struct chess_player {
   piece_t *knight;
   piece_t *queen;
   piece_t *king;
-  bool[TOTAL_NUM_OF_PIECES] has_moved;
+  bool has_moved[TOTAL_NUM_OF_PIECES];
 } player_t;
 
 typedef struct sequence {
@@ -93,10 +93,10 @@ extern unsigned short num_draw;
 
 //Functions
 void initialize(char*[NUM_OF_PLAYERS]);
-piece_t get_piece(coord_t);
+piece_t *get_piece(coord_t);
 bool coord_equals(coord_t, coord_t);
 coord_t move_vector(bool, coord_t, signed short, signed short);
-coord_t* show_avail_move(piece_t*);
+coord_t *show_avail_move(coord_t, piece_t*, bool);
 bool move_piece(coord_t, coord_t);
 bool click_draw(player_t*);
 void terminate();
