@@ -57,7 +57,11 @@ extern unsigned short num_draw;
 //Functions
 void initialize();
 piece_t get_piece(coord_t);
+<<<<<<< HEAD:src/chess.h
 coord_t move_vector(bool, signed short, signed short);
+=======
+coord_t move_vector(coord_t, signed short, signed short);
+>>>>>>> 474a078c5427185b165fb782b6219c5af57897df:chess.h
 coord_t* show_avail_move(coord_t);
 bool move_piece(coord_t, coord_t);
 pc_num_map attack(piece_t);
