@@ -1,13 +1,16 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #define L_AXIS_LEN 8
 #define N_AXIS_LEN 4 
 #define NUM_PIECE_TYPES 6
+#define L_INIT 'a'
+#define N_INIT 1
 
 //Enumerations
-extern enum {BLACK = 0, WHITE = 1, RED = 2} color;
-extern enum {PAWN,BISHOP,KNIGHT,KING,QUEEN,ROOK} piece;
-extern enum {GAME, CHECKMATE = 1, STALEMATE = 0.5, DRAW = 0.3} status;
+typedef enum {BLACK = 0, WHITE = 1, RED = 2} color;
+typedef enum {PAWN,BISHOP,KNIGHT,KING,QUEEN,ROOK} piece;
+typedef enum {GAME, CHECKMATE = 3, STALEMATE = 2, DRAW = 1} status;
 
 //Type definiations
 typedef struct chess_piece {
@@ -37,7 +40,7 @@ typedef struct chess_player {
   char *name;
   unsigned short score;
   pc_num_map possession[NUM_PIECE_TYPES];
-  bool agree_draw = false;
+  bool agree_draw;
 } player_t;
 
 typedef struct sequence {
@@ -46,15 +49,16 @@ typedef struct sequence {
 } seq_t;
 
 //Global variables
+extern board_t board;
 extern status game_status;
-extern sequence curr_player;
+extern seq_t curr_player;
 extern unsigned short num_draw;
 
 //Functions
 void initialize();
 piece_t get_piece(coord_t);
-coord_t move_vector(coord_t, signed short, signed short);
-coord_t* show_avail_move(coord_t)
+coord_t move_vector(bool, signed short, signed short);
+coord_t* show_avail_move(coord_t);
 bool move_piece(coord_t, coord_t);
 pc_num_map attack(piece_t);
 bool click_draw(color);
