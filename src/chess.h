@@ -24,7 +24,7 @@ typedef struct piece_type {
 
 //Type definiations
 typedef struct chess_piece {  
-  color piece_color;  
+  player_t *owner;  
   piece_type_t* type;
 } piece_t;
 
@@ -59,16 +59,11 @@ typedef struct chess_player {
   bool has_moved[TOTAL_NUM_OF_PIECES];
 } player_t;
 
-typedef struct sequence {
- player_t *current_player;
- struct sequence *next_player;
-} seq_t;
-
 //global variables
 extern player_t black_player;
 extern player_t white_player;
 extern player_t red_player;
-extern seq_t *curr_player;
+extern player_t *current_player;
 
 //=======================================================================================================
 
@@ -79,7 +74,7 @@ typedef struct chess_board {
 } board_t;
 
 typedef struct coordinate {
-  color region;
+  player_t *belongs;
   short x;
   short y;
 } coord_t;
