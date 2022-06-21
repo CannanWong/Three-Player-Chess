@@ -115,7 +115,7 @@ bool click_draw(player_t *pl) {
 
 bool* get_moved_index(coord_t grid, piece_t *pc) {
   unsigned short index = MAX_PIECES;
-  player_t *pl = get_player(pc -> piece_col);
+  player_t *pl = get_player(pc -> piece_color);
   if (pl == grid.belongs) {
     if (grid.y == 1) {
       //i-pawn
@@ -147,9 +147,9 @@ bool displaced(coord_t grid, piece_t *pc) {
 }
 
 bool move_piece(coord_t orig, coord_t dest) {
-  coord_t *avail_moves = show_avail_move(coord_t orig);
+  coord_t *avail_moves = show_avail_move(orig);
   piece_t *orig_pc = get_piece(orig);
-  for(int i = 0; avail_moves[i]; i++) {
+  for(int i = 0; &avail_moves[i]; i++) {
     if (coord_equals(dest, avail_moves[i])) {
       bool *orig_moved = get_moved_index(orig, orig_pc);
       bool *dest_moved = get_moved_index(dest, orig_pc);

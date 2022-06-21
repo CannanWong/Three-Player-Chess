@@ -24,7 +24,7 @@ typedef struct piece_type {
 
 //Type definiations
 typedef struct chess_piece {  
-  color piece_col;
+  color piece_color;
   piece_type_t* type;
 } piece_t;
 
