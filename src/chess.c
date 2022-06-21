@@ -5,10 +5,14 @@
 #define LEGAL_MOVE 1
 #define GET_KING 2
 
+coord_t *old_king = NULL;
+
 bool check_info(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
     if (pc->type != &default_piece && pc->piece_color != pl->player_col) {
         coord_t *moves = show_avail_move(curr);
         for (int l = 0; moves[l].x != 0; l++) {
+            //whenever any piece of the other two color has an available move
+            //which has the same coord as the king, checked
             if (coord_equals(moves[l], *king)) {
                 return true;
             }
@@ -17,11 +21,20 @@ bool check_info(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
     return false;
 }
 
-//Working on...
 bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
     if (pc->type != &default_piece && pc->piece_color == pl->player_col) {
         coord_t *moves = show_avail_move(curr);
-        return moves[0].x != 0;
+        for (int i = 0; moves[i].x != 0; i++) {
+            //moves[i] is now dest of the pseudo-legal move
+            //invoke in_check after move to check if it's legal
+            move_piece(curr, moves[i], true);
+            bool still_check = in_check(pl);
+            //reset board (not sure if this is safe)
+            move_piece(moves[i], curr, true);
+            if (!still_check) {
+                return true;
+            }
+        }
     }
     return false;
 }
@@ -34,6 +47,8 @@ bool get_pieces_info(player_t *pl, int mode, coord_t *coord) {
             for (int j = 0; j < MAX_Y; j++) {
                 coord_t curr = {.x = i, .y = j, .belongs = pls[k]};
                 piece_t *pc = get_piece(curr);
+                //Nested fors are just for iterating through the structure and getting the pieces
+                //Following is the logic part
                 switch (mode) {
                     case IS_CHECKED:
                         check = is_checked(pl, curr, pc, coord);
@@ -58,9 +73,17 @@ bool get_pieces_info(player_t *pl, int mode, coord_t *coord) {
 }
 
 bool in_check(player_t *pl) {
+    //Optimisation for multiple "check" checks during legal_moves
+    //prevents searching for king everytime, search only if king itself moves
     coord_t *king;
-    bool check = get_pieces_info(pl, GET_KING, king);
-    assert(check);
+    if (old_king == NULL || get_piece(*old_king)->type != &king_type) {
+        bool check = get_pieces_info(pl, GET_KING, king);
+        assert(check);
+    } else {
+        //old_king points to coord_t of current king
+        //so no pointer refs..?
+        king = old_king;
+    }
     return get_pieces_info(pl, IS_CHECKED, king);
 }
 
@@ -75,7 +98,7 @@ bool draw() {
 //check if every player has agreed to draw 
 int game_state(player_t *curr_player) {
     //if draw then game status draw
-    //if !has_legal_moves {if check then status = checkmate else stalemate}\
+    //if !has_legal_moves {if check then status = checkmate else stalemate}
     //else continue as state = game
     if (draw()) {
         return DRAW;
