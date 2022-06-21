@@ -99,6 +99,8 @@ coord_t move_vector(bool, coord_t, signed short, signed short);
 coord_t *show_avail_move(coord_t);
 bool move_piece(coord_t, coord_t);
 bool click_draw(player_t*);
+//swap king and rook, if bool is true swap with left rook, else swap with right rook
+void castling(bool);
 void terminate();
 void free_board();
 void turn_board();
