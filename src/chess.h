@@ -87,6 +87,7 @@ extern coord_t *avail_moves;
 
 //Functions
 void initialize(char*[NUM_OF_PLAYERS]);
+player_t* adjacent(player_t*, bool);
 piece_t *get_piece(coord_t);
 bool coord_equals(coord_t, coord_t);
 coord_t move_vector(bool, coord_t, signed short, signed short);
