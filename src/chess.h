@@ -83,8 +83,7 @@ typedef struct coordinate {
 extern board_t board;
 extern status game_status;
 extern unsigned short num_draw;
-
-
+extern coord_t *avail_moves;
 
 //Functions
 void initialize(char*[NUM_OF_PLAYERS]);
@@ -94,16 +93,16 @@ coord_t move_vector(bool, coord_t, signed short, signed short);
 coord_t *show_avail_move(coord_t);
 bool move_piece(coord_t, coord_t);
 bool click_draw(player_t*);
-//swap king and rook, if bool is true swap with left rook, else swap with right rook
-void castling(bool);
+void castling(coord_t);
+void promotion(coord_t, piece_t);
 void terminate();
-void free_board();
 void turn_board();
 bool in_check();
 bool has_legal_moves();
 bool draw();
 int game_state();
 bool displaced(coord_t, piece_t*);
+void close_game();
 
 /*
 typedef struct piece_number_map {
