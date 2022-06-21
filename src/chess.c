@@ -8,7 +8,7 @@
 bool check_info(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
     if (pc->type != &default_piece && pc->piece_color != pl->player_col) {
         coord_t *moves = show_avail_move(curr);
-        for (int l = 0; moves[l].x != 0; l++) {
+        for (int l = 0; moves[l].x == 0; l++) {
             if (coord_equals(moves[l], *king)) {
                 return true;
             }
@@ -17,11 +17,20 @@ bool check_info(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
     return false;
 }
 
-//Working on...
 bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
     if (pc->type != &default_piece && pc->piece_color == pl->player_col) {
         coord_t *moves = show_avail_move(curr);
-        return moves[0].x != 0;
+        for (int i = 0; moves[i].x == 0; i++) {
+            //moves[i] is now dest of the pseudo-legal move
+            //invoke in_check after move to check if it's legal
+            move_piece(curr, moves[i], true);
+            bool still_check = in_check(pl);
+            //reset board (not sure if this is safe)
+            move_piece(moves[i], curr, true);
+            if (!still_check) {
+                return true;
+            }
+        }
     }
     return false;
 }
@@ -34,6 +43,8 @@ bool get_pieces_info(player_t *pl, int mode, coord_t *coord) {
             for (int j = 0; j < MAX_Y; j++) {
                 coord_t curr = {.x = i, .y = j, .belongs = pls[k]};
                 piece_t *pc = get_piece(curr);
+                //Nested fors are just for iterating through the structure and getting the pieces
+                //Following is the logic part
                 switch (mode) {
                     case IS_CHECKED:
                         check = is_checked(pl, curr, pc, coord);
@@ -75,7 +86,7 @@ bool draw() {
 //check if every player has agreed to draw 
 int game_state(player_t *curr_player) {
     //if draw then game status draw
-    //if !has_legal_moves {if check then status = checkmate else stalemate}\
+    //if !has_legal_moves {if check then status = checkmate else stalemate}
     //else continue as state = game
     if (draw()) {
         return DRAW;

@@ -72,3 +72,4 @@ coord_t* show_avail_move(coord_t piece_coord) {
         }
     }
     return return_corrds;
+}
