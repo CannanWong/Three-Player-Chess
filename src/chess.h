@@ -19,7 +19,7 @@ typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
 typedef struct piece_type {
   bool single_move;
   //x then y
-  int *(move_vec[2]);
+  short *(move_vec[2]);
 } piece_type_t;
 
 //Type definiations
@@ -60,7 +60,7 @@ typedef struct chess_player {
 } player_t;
 
 typedef struct sequence {
- color curr_col;
+ player_t *current_player;
  struct sequence *next_player;
 } seq_t;
 
@@ -80,8 +80,8 @@ typedef struct chess_board {
 
 typedef struct coordinate {
   color region;
-  int x;
-  int y;
+  short x;
+  short y;
 } coord_t;
 
 //Global variables
@@ -96,7 +96,7 @@ void initialize(char*[NUM_OF_PLAYERS]);
 piece_t *get_piece(coord_t);
 bool coord_equals(coord_t, coord_t);
 coord_t move_vector(bool, coord_t, signed short, signed short);
-coord_t *show_avail_move(coord_t, piece_t*, bool);
+coord_t *show_avail_move(coord_t, bool);
 bool move_piece(coord_t, coord_t);
 bool click_draw(player_t*);
 void terminate();
