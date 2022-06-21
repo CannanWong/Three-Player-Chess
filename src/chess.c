@@ -5,10 +5,14 @@
 #define LEGAL_MOVE 1
 #define GET_KING 2
 
+coord_t *old_king = NULL;
+
 bool check_info(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
     if (pc->type != &default_piece && pc->piece_color != pl->player_col) {
         coord_t *moves = show_avail_move(curr);
-        for (int l = 0; moves[l].x == 0; l++) {
+        for (int l = 0; moves[l].x != 0; l++) {
+            //whenever any piece of the other two color has an available move
+            //which has the same coord as the king, checked
             if (coord_equals(moves[l], *king)) {
                 return true;
             }
@@ -20,7 +24,7 @@ bool check_info(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
 bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
     if (pc->type != &default_piece && pc->piece_color == pl->player_col) {
         coord_t *moves = show_avail_move(curr);
-        for (int i = 0; moves[i].x == 0; i++) {
+        for (int i = 0; moves[i].x != 0; i++) {
             //moves[i] is now dest of the pseudo-legal move
             //invoke in_check after move to check if it's legal
             move_piece(curr, moves[i], true);
@@ -69,9 +73,17 @@ bool get_pieces_info(player_t *pl, int mode, coord_t *coord) {
 }
 
 bool in_check(player_t *pl) {
+    //Optimisation for multiple "check" checks during legal_moves
+    //prevents searching for king everytime, search only if king itself moves
     coord_t *king;
-    bool check = get_pieces_info(pl, GET_KING, king);
-    assert(check);
+    if (old_king == NULL || get_piece(*old_king)->type != &king_type) {
+        bool check = get_pieces_info(pl, GET_KING, king);
+        assert(check);
+    } else {
+        //old_king points to coord_t of current king
+        //so no pointer refs..?
+        king = old_king;
+    }
     return get_pieces_info(pl, IS_CHECKED, king);
 }
 
