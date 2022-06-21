@@ -12,10 +12,10 @@ piece_type_t queen_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, 
 piece_type_t rook_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}}; 
 piece_type_t bishop_type = {true, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
 
-//agree_draw, player_color, name, score, i_pawn, o_pawn, bishop, rook, knight, queen, king, has_moved
-player_t black_player = {false, BLACK, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {false}};
-player_t white_player = {false, WHITE, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {false}};
-player_t red_player = {false, RED, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, {false}};
+//agree_draw, player_color, name, score, i_pawn, o_pawn, bishop, rook, knight, queen, king
+player_t black_player = {false, BLACK, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+player_t white_player = {false, WHITE, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+player_t red_player = {false, RED, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 static void init_player(player_t *current_player, char *name) {
     current_player->name = (char*) malloc(MAX_NAME_SIZE);

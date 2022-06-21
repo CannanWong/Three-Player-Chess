@@ -63,7 +63,6 @@ typedef struct chess_player {
 extern player_t black_player;
 extern player_t white_player;
 extern player_t red_player;
-extern player_t *current_player;
 
 //=======================================================================================================
 
@@ -81,9 +80,16 @@ typedef struct coordinate {
 
 //Global variables
 extern board_t board;
-extern status game_status;
 extern unsigned short num_draw;
-extern coord_t *avail_moves;
+extern const coord_t DEFAULT_COORD;
+
+//======================================================================================================
+//Current state variables
+extern status game_status;
+extern player_t *current_player;
+extern piece_t *current_piece;
+extern coord_t *curr_avail_moves;
+extern bool *moved_index;
 
 //Functions
 void initialize(char*[NUM_OF_PLAYERS]);
@@ -91,17 +97,19 @@ piece_t *get_piece(coord_t);
 bool coord_equals(coord_t, coord_t);
 coord_t move_vector(bool, coord_t, signed short, signed short);
 coord_t *show_avail_move(coord_t);
-bool move_piece(coord_t, coord_t);
+bool move_piece(coord_t, coord_t, bool); //bool (is_castle) only set to true when called by castling()
 bool click_draw(player_t*);
-void castling(coord_t);
-void promotion(coord_t, piece_t);
+
+bool ask_castle(bool, bool);
+piece_t* ask_prom();
+
 void terminate();
 void turn_board();
 bool in_check();
 bool has_legal_moves();
 bool draw();
 int game_state();
-bool displaced(coord_t, piece_t*);
+bool displaced(coord_t);
 void close_game();
 
 /*
