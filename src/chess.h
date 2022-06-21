@@ -101,6 +101,11 @@ bool move_piece(coord_t, coord_t);
 bool click_draw(player_t*);
 void terminate();
 void free_board();
+void turn_board();
+bool in_check();
+bool has_legal_moves();
+bool draw();
+int game_state();
 
 /*
 typedef struct piece_number_map {

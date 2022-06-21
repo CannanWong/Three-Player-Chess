@@ -3,8 +3,8 @@
 #include <stdio.h>
 
 int main() {
-    set_pieces();
-    //place pieces on board
+    char *players[] = {"Andy", "Beth", "Chad"};
+    initialize(players);
     while(1) {
         turn_player();
         //find player turn and turn board to face player
