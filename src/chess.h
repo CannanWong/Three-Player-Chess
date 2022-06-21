@@ -73,10 +73,10 @@ typedef struct chess_board {
   piece_t *red_region[MAX_X][MAX_Y];
 } board_t;
 
-typedef struct coordinate {
-  player_t *belongs;
+typedef struct coordinate {  
   short x;
   short y;
+  player_t *belongs;
 } coord_t;
 
 //Global variables
@@ -103,6 +103,7 @@ bool in_check();
 bool has_legal_moves();
 bool draw();
 int game_state();
+bool displaced(coord_t, piece_t*);
 
 /*
 typedef struct piece_number_map {
