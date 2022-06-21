@@ -60,7 +60,7 @@ coord_t* show_avail_move(coord_t piece_coord) {
         }
     }
     //first move from pawn can be 2 blocks
-    if (displaced(piece_coord)) {
+    if (!displaced(piece_coord)) {
         if (current_piece->type == &i_pawn_type || current_piece->type == &o_pawn_type) {
             coord_t buffer = move_vector(true, piece_coord, 0, current_piece->type->move_vec[0][1] * 2);
             if (is_valid(buffer)) {
