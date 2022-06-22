@@ -41,19 +41,23 @@ coord_t* show_avail_move(coord_t piece_coord) {
                     }
                     }
                     current_coord = return_corrds[num_of_moves - 1];
-                    buffer = move_vector(true, current_coord, current_vec[0], current_vec[1]);  
+                    if (changed_once) {
+                        buffer = move_vector(true, current_coord, current_vec[0] * -1, current_vec[1] * -1);  
+                    }
                 }
                 //attack opponent piece
             }                
             if (is_valid(buffer) && get_piece(buffer)->piece_color != current_piece->piece_color) {
                 return_corrds[num_of_moves] = buffer;
                 num_of_moves++;  
-                change_boarder = buffer.belongs != current_coord.belongs;
-                if (!changed_once && change_boarder) {
-                    buffer = move_vector(false, current_coord, current_vec[0], current_vec[1]);
-                    if (!coord_equals(buffer, return_corrds[num_of_moves - 1])) {
-                        return_corrds[num_of_moves] = buffer;
-                        num_of_moves++;   
+                if (!changed_once) {
+                    change_boarder = buffer.belongs != current_coord.belongs;
+                    if (change_boarder) {
+                        buffer = move_vector(false, current_coord, current_vec[0], current_vec[1]);
+                        if (!coord_equals(buffer, return_corrds[num_of_moves - 1])) {
+                            return_corrds[num_of_moves] = buffer;
+                            num_of_moves++;   
+                        }
                     }
                 }
             }

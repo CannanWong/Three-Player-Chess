@@ -9,7 +9,7 @@
 #define TOTAL_NUM_OF_PIECES 16
 
 //Enumerations
-typedef enum {BLACK = 0, WHITE = 1, RED = 2} color;
+typedef enum {BLACK = 0, WHITE = 1, RED = 2, NO_COLOR = -1} color;
 typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
 
 //=======================================================================================================
