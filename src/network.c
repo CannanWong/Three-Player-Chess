@@ -21,7 +21,7 @@ struct sockaddr_in server_addr;
 struct sockaddr_in display_addr;
 unsigned int display_size = sizeof(display_addr);
 
-static int get_local_ip() {
+static char *get_local_ip() {
     char buffer[256];
     struct hostent *local_info;
     gethostname(buffer, sizeof(buffer));
@@ -36,18 +36,24 @@ void start_server() {
     server_socket = socket(PF_INET, SOCK_STREAM, 0);
 
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY); 
     server_addr.sin_port = htons(display_port);
 
     bind(server_socket, (struct sockaddr*)&server_addr,sizeof(server_addr));
 
-    for (int i = 0; i != 30; )
-    if(listen(server_socket, 10) == -1){
-        printf("listen failed");
-        exit(EXIT_FAILURE);
-    }     
+    printf("loop\n");
+    for (int i = 0; i != 30; i++) {
+        if(listen(server_socket, 10) == -1){
+            printf("listen failed");
+            exit(EXIT_FAILURE);
+        } else {
+            break;
+        }
+    }
 
+    printf("trying to connect\n");
     display_socket = accept(server_socket, (struct sockaddr*)&display_addr, &display_size);
+    printf("connected1");
 }
 
 void close_display() {
@@ -72,4 +78,17 @@ bool receive_msg(char *msg, int max_size) {
 
 bool send_msg(char *msg, int max_size) {
     return (send(display_socket, msg, max_size, 0)) != max_size;
+}
+
+int main() {
+    start_server();
+    char receive[40], send[40];
+
+    receive_msg(receive, sizeof(receive));
+    printf("receive %s", receive);
+
+    scanf("%40s", send);
+    send_msg(send, sizeof(send));
+
+    close_display();
 }
