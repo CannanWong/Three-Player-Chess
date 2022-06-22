@@ -184,19 +184,34 @@ void check_prom(coord_t grid) {
   }
 }
 
+void castling(unsigned short opt, coord_t king_orig) {
+  if (opt == 1) {
+    coord_t rook_orig = {0, 0, king_orig.belongs};
+    coord_t king_dest = {king_orig.x-2, 0,king_orig.belongs};
+    coord_t rook_dest = {king_dest.x+1, 0,king_dest.belongs};
+    move_piece(king_orig, king_dest, true);
+  }
+  if (opt == 2) {
+    coord_t rook_orig = {MAX_X-1, 0, king_orig.belongs};
+    coord_t king_dest = {king_orig.x+2,0,king_orig.belongs,};
+    coord_t rook_dest = {king_dest.x-1,0,king_dest.belongs,};
+    move_piece(king_orig, king_dest, true);
+  }
+}
+
 void check_castle(coord_t grid) {
   if (current_piece->type == &king_type && !displaced(grid)) {
     bool left = true;
     bool right = true;
     for (int i = 1; i < grid.x; i++) {
-      coord_t pos = {grid.belongs, i, 0};
+      coord_t pos = {i, 0, grid.belongs};
       if (get_piece(pos) != &default_piece) {
         left = false;
         break;
       }
     }
     for (int j = 1; j < MAX_X-1; j++) {
-      coord_t pos = {grid.belongs, grid.x+j, 0};
+      coord_t pos = {grid.x+j,0,grid.belongs};
       if (get_piece(pos) != &default_piece) {
         right = false;
         break;
@@ -213,17 +228,3 @@ void turn_board() {
   current_player = adjacent(current_player, false); 
 }
 
-void castling(unsigned short opt, coord_t king_orig) {
-  if (opt == 1)  {
-    coord_t rook_orig = {king_orig.belongs, 0, 0};
-    coord_t king_dest = {king_orig.belongs, king_orig.x-2, 0};
-    coord_t rook_dest = {king_dest.belongs, king_dest.x+1, 0};
-    move_piece(king_orig, king_dest, true);
-  }
-  if (opt == 2) {
-    coord_t rook_orig = {king_orig.belongs, MAX_X-1, 0};
-    coord_t king_dest = {king_orig.belongs, king_orig.x+2, 0};
-    coord_t rook_dest = {king_dest.belongs, king_dest.x-1, 0};
-    move_piece(king_orig, king_dest, true);
-  }
-}

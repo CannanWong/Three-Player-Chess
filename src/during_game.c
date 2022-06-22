@@ -68,7 +68,38 @@ coord_t* show_avail_move(coord_t piece_coord) {
                 num_of_moves++;   
             }
         } else if (current_piece->type == &king_type) {
-         
+            coord_t rook_l = {0, 0, piece_coord.belongs};
+            coord_t rook_r = {0, MAX_X-1, piece_coord.belongs};
+            if (!displaced(rook_l)) {
+                bool left = true;
+                for (int i = 1; i < piece_coord.x; i++) {
+                    coord_t pos = {i, 0, piece_coord.belongs};
+                    if (get_piece(pos) != &default_piece) {
+                        left = false;
+                        break;
+                    }
+                }
+                if (left) {
+                    coord_t dest = {piece_coord.x-2, 0, piece_coord.belongs};
+                    return_corrds[num_of_moves] = dest;
+                    num_of_moves++;
+                }
+            }
+            if (!displaced(rook_r)) {
+                bool right = true;
+                for (int j = piece_coord.x+1; j < MAX_X-1; j++) {
+                    coord_t pos = {j,0,piece_coord.belongs};
+                    if (get_piece(pos) != &default_piece) {
+                        right = false;
+                        break;
+                    }
+                }
+                if (right) {
+                    coord_t dest = {piece_coord.x+2, 0, piece_coord.belongs};
+                    return_corrds[num_of_moves] = dest;
+                    num_of_moves++;
+                }
+            }
         }
     }
     return return_corrds;

@@ -101,11 +101,13 @@ coord_t *show_avail_move(coord_t);
 bool move_piece(coord_t, coord_t, bool); //bool (is_castle) only set to true when called by castling()
 bool click_draw(player_t*);
 
-bool ask_castle(bool, bool);
 piece_t* ask_prom();
+void check_prom(coord_t);
+void castling(coord_t, bool);
 
 void terminate();
-void turn_board();
+void next_player();
+coord_t get_player_input();
 bool in_check();
 bool has_legal_moves();
 bool draw();

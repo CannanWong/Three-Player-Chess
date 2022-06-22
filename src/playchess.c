@@ -5,25 +5,40 @@
 int main() {
     char *players[] = {"Andy", "Beth", "Chad"};
     initialize(players);
-    while(1) {
-        turn_player();
-        //find player turn and turn board to face player
-        if (is_game_finished(current_player))
-        {
-            //takes current player, sees if they are checkmated or have no valid moves if so game is over
-            break;
-        }
-        while (!valid_move_made)
-        {
-            get_player_input();
-            //click on piece
-            get_player_input();
-            //click away or on valid move
-        }
-        do_move();
-    }
-    end_game();
 
+    while(game_status == GAME) {
+        do {
+            coord_t curr_grid = get_player_input();
+            get_piece(curr_grid);
+        } while (current_piece->piece_color != current_player->player_col);
+            
+        show_avail_move(curr_grid);
+
+        bool ctn = false;
+        do {
+            coord_t dest = get_player_input();
+            if (current_piece->type == &king_type) {
+                signed short dx = dest.x - curr_grid.x;
+                if (dx == -2) {
+                    castling(curr_grid, true);
+                    ctn = true;
+                }
+                if (dx == 2) {
+                    castling(curr_grid, false);
+                    ctn = true;
+                }
+            } else {
+                ctn = move_piece(curr_grid, dest, false);
+            }
+        } while (!ctn);
+
+        check_prom(curr_grid);
+
+        update_status();
+        next_player();
+    }
+
+    end_game();
     return 0;
 }
 
