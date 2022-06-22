@@ -22,3 +22,12 @@ promotion request :
 piece to promote:
 4,x,0 
 (x: 0--o_pawn; 1--bishop; 2--rook; 3--knight; 4--queen)
+
+startgame:
+name1, name2, name3
+
+continue:
+1
+
+end:
+0
