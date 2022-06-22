@@ -1,0 +1,5 @@
+/Users/negativetraffic/Projects/logic_display_connection/logic_display_connection/obj/Debug/net6.0/logic_display_connection.csproj.AssemblyReference.cache
+/Users/negativetraffic/Projects/logic_display_connection/logic_display_connection/obj/Debug/net6.0/logic_display_connection.GeneratedMSBuildEditorConfig.editorconfig
+/Users/negativetraffic/Projects/logic_display_connection/logic_display_connection/obj/Debug/net6.0/logic_display_connection.AssemblyInfoInputs.cache
+/Users/negativetraffic/Projects/logic_display_connection/logic_display_connection/obj/Debug/net6.0/logic_display_connection.AssemblyInfo.cs
+/Users/negativetraffic/Projects/logic_display_connection/logic_display_connection/obj/Debug/net6.0/logic_display_connection.csproj.CoreCompileInputs.cache
