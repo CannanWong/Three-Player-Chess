@@ -48,7 +48,7 @@ typedef struct chess_player {
   bool agree_draw;
   color player_col;
   char *name;
-  unsigned short score;
+  unsigned int score;
   piece_t *i_pawn;
   piece_t *o_pawn;
   piece_t *bishop;
@@ -92,7 +92,8 @@ extern coord_t *curr_avail_moves;
 extern bool *moved_index;
 
 //Functions
-void initialize(char*[NUM_OF_PLAYERS]);
+void init_players(char**);
+void init_chess_boards();
 player_t* adjacent(player_t*, bool);
 piece_t *get_piece(coord_t);
 bool coord_equals(coord_t, coord_t);
@@ -101,9 +102,11 @@ coord_t *show_avail_move(coord_t);
 bool move_piece(coord_t, coord_t, bool); //bool (is_castle) only set to true when called by castling()
 bool click_draw(player_t*);
 
-piece_t* ask_prom();
-void check_prom(coord_t);
 void castling(coord_t, bool);
+void check_prom(coord_t);
+
+bool receive_msg(char*, int);
+bool send_msg(char*, int);
 
 void terminate();
 void next_player();

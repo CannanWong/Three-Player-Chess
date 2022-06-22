@@ -1,4 +1,4 @@
-#include <chess.h>
+#include "chess.h"
 
 #define NUM_OF_PAWNS 8
 #define MAX_NAME_SIZE 32
@@ -7,10 +7,10 @@ piece_type_t default_piece = {NULL, 0};
 piece_type_t i_pawn_type = {true, {{0, 1}}};
 piece_type_t o_pawn_type = {true, {{0, -1}}};
 piece_type_t knight_type = {true, {{1, 2}, {2, 1}, {1, -2}, {-2, 1}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
-piece_type_t king_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
-piece_type_t queen_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
-piece_type_t rook_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}}; 
-piece_type_t bishop_type = {true, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+piece_type_t king_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+piece_type_t queen_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+piece_type_t rook_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}}; 
+piece_type_t bishop_type = {false, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
 
 //agree_draw, player_color, name, score, i_pawn, o_pawn, bishop, rook, knight, queen, king
 player_t black_player = {false, BLACK, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -43,7 +43,7 @@ static void init_player(player_t *current_player, char *name) {
     current_player->king->type = &king_type;
 }
 
-static void init_players(char *player_names[NUM_OF_PLAYERS]) {
+void init_players(char *player_names[NUM_OF_PLAYERS]) {
     init_player(&black_player, player_names[0]);
     init_player(&white_player, player_names[1]);
     init_player(&red_player, player_names[2]);
@@ -64,13 +64,15 @@ static void init_player_board(piece_t *current_board[MAX_X][MAX_Y], player_t *pl
     current_board[4][0] = &player->queen;
 }
 
-static void init_chess_boards() {
+void init_chess_boards() {
     init_player_board(&board.black_region, &black_player);
     init_player_board(&board.white_region, &white_player);
     init_player_board(&board.red_region, &red_player);
 }
 
+/*
 void initialize(char *player_names[NUM_OF_PLAYERS]) {
     init_players(player_names);
     init_chess_boards();
 }
+*/
