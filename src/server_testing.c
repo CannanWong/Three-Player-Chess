@@ -24,7 +24,7 @@ int main(void)
  
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(500);
-  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  serv_addr.sin_addr.s_addr = inet_addr("146.169.167.9");
  
   if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
     {
