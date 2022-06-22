@@ -33,7 +33,7 @@ void start_server() {
     memset(&server_addr, '0', sizeof(server_addr));
 
     //get socket
-    server_socket = socket(PF_INET, SOCK_STREAM, 0);
+    server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY); 
@@ -53,7 +53,6 @@ void start_server() {
 
     printf("trying to connect\n");
     display_socket = accept(server_socket, (struct sockaddr*)&display_addr, &display_size);
-    printf("connected1");
 }
 
 void close_display() {
@@ -85,7 +84,7 @@ int main() {
     char receive[40], send[40];
 
     receive_msg(receive, sizeof(receive));
-    printf("receive %s", receive);
+    printf("receive: %s", receive);
 
     scanf("%40s", send);
     send_msg(send, sizeof(send));
