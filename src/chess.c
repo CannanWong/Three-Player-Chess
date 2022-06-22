@@ -26,8 +26,8 @@ bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
         coord_t *moves = show_avail_move(curr);
         for (int i = 0; moves[i].x != 0; i++) {
             //moves[i] is now dest of the pseudo-legal move
-            //(determined by inspecting moves on tiles with own color pieces)
             //invoke in_check after move to check if it's legal
+            
             move_piece(curr, moves[i], true);
             bool still_check = in_check(pl);
             //reset board (not sure if this is safe)
@@ -42,7 +42,6 @@ bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
 
 bool get_pieces_info(player_t *pl, int mode, coord_t *coord) {
     bool check = false;
-    //check own player board first to optimise search speeds at early stage
     player_t* pls[3] = {pl, adjacent(pl, true), adjacent(pl, false)};
     for (int k = 0; k < 2; k++) {
         for (int i = 0; i < MAX_X; i++) {
@@ -98,14 +97,14 @@ bool draw() {
     return black_player.agree_draw && white_player.agree_draw && red_player.agree_draw;
 }
 //check if every player has agreed to draw 
-int game_state(player_t *curr_player) {
+int game_state() {
     //if draw then game status draw
     //if !has_legal_moves {if check then status = checkmate else stalemate}
     //else continue as state = game
     if (draw()) {
         return DRAW;
-    } else if (!has_legal_moves(curr_player)) {
-        if (in_check(curr_player)) {
+    } else if (!has_legal_moves(current_player)) {
+        if (in_check(current_player)) {
             return CHECKMATE;
         } else {
             return STALEMATE;

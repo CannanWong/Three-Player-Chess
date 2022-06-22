@@ -64,7 +64,12 @@ void set_piece(coord_t grid, piece_t* pc) {
 }
 
 coord_t move_x(coord_t orig, signed short dx, bool* in_boundary) {
-  unsigned short new_x = orig.x + dx;
+  short new_x;
+  if (orig.belongs->player_col == current_piece->piece_color) {
+    new_x = orig.x + dx;
+  } else {
+    new_x = orig.x - dx;
+  }
   if(new_x < 0 || new_x >= MAX_X) { 
     in_boundary = false;
   }
@@ -74,20 +79,33 @@ coord_t move_x(coord_t orig, signed short dx, bool* in_boundary) {
 
 coord_t move_y(coord_t orig, signed short dy, bool* in_boundary) {
   coord_t dest;
-  unsigned short new_y = orig.y + dy;
-  if (new_y < MAX_Y) {
-    dest.y = new_y;
-    dest.x = orig.x;
-    dest.belongs = orig.belongs;
-  } else {
-    if (orig.x < MAX_X/2) {
-      dest.belongs = adjacent(orig.belongs, true);
+  short new_y;
+  if (orig.belongs->player_col == current_piece->piece_color) {
+    newy_y = orig.y+dy
+    if (new_y < MAX_Y) {
+      dest.y = new_y;
+      dest.x = orig.x;
+      dest.belongs = orig.belongs;
     } else {
-      dest.belongs = adjacent(orig.belongs, false);
+      if (orig.x < MAX_X/2) {
+        dest.belongs = adjacent(orig.belongs, true);
+      } else {
+        dest.belongs = adjacent(orig.belongs, false);
+      }
+      dest.y = 2 * MAX_Y - 1 - new_y;
+      dest.x = MAX_X - 1 - orig.x;
     }
-    dest.y = 2 * MAX_Y - 1 - new_y;
-    dest.x = MAX_X - 1 - orig.x;
+  } else {
+    new_y = orig.y-dy;
+    if (new_y < MAX_Y) {
+      dest.y = new_y;
+      dest.x = orig.x;
+      dest.belongs = orig.belongs;
+    } else {
+      dest.belongs = 
+    }
   }
+
   if (new_y < 0 || new_y >= 2 * MAX_Y) {
     in_boundary = false;
   }
@@ -149,32 +167,55 @@ bool displaced(coord_t grid) {
   return (moved_index != NULL || moved_index);
 }
 
-bool move_piece(coord_t orig, coord_t dest, bool verified) {
-  if (!verified) {
-    for(int i = 0; &curr_avail_moves[i]; i++) {
-      if (coord_equals(dest, curr_avail_moves[i])) {
-        verified = true;
-        break;
-      }
+bool movable(coord_t dest, coord_t *avails) {
+  for(int i = 0; &avails[i]; i++) {
+    if (coord_equals(dest, avails[i])) {
+      return true;
     }
   }
-  if (verified) {
-    if (moved_index != NULL) {
-      *moved_index = true; //orig
-    }
-    get_moved_index(dest, current_piece);
-    if (moved_index != NULL) {
-      *moved_index = true; //dest
-    }
-    set_piece(dest, current_piece);
-    set_piece(orig, &default_piece);
+  return false;
+}
+
+piece_t* move_piece(coord_t orig, coord_t dest) {
+  get_moved_index(orig, current_piece);
+  if (moved_index != NULL) {
+    *moved_index = true; //orig
   }
-  return verified;
+  get_moved_index(dest, current_piece);
+  if (moved_index != NULL) {
+    *moved_index = true; //dest
+  }
+
+  attacked = get_piece(dest);
+  set_piece(dest, current_piece);
+  set_piece(orig, &default_piece);
+  }
+
+piece_t* revert_move(coord_t orig, coord_t dest) {
+
+}
+
+piece_t* ask_prom() {
+    char msg[MSG_SIZE] = {4,0,0};
+    send_msg(msg, MSG_SIZE*sizeof(char));
+    receive_msg(msg, MSG_SIZE*sizeof(char));
+    unsigned short code = msg[1];
+    switch (code) {
+        case 0: return &o_pawn_type;
+        case 1: return &bishop_type;
+        case 2: return &rook_type;
+        case 3: return &knight_type;
+        default: {
+            assert(code == 4);
+            return &queen_type;
+        }
+    }
 }
 
 void check_prom(coord_t grid) {
   if (grid.y == 0) {
     if (current_piece->piece_color != grid.belongs->player_col) {
+
       piece_t *replace = ask_prom();
       if (replace != NULL) {
         set_piece(grid, replace);
@@ -184,43 +225,15 @@ void check_prom(coord_t grid) {
   }
 }
 
-void castling(unsigned short opt, coord_t king_orig) {
-  if (opt == 1) {
+void castling(bool left, coord_t king_orig) {
+  if (left) {
     coord_t rook_orig = {0, 0, king_orig.belongs};
-    coord_t king_dest = {king_orig.x-2, 0,king_orig.belongs};
-    coord_t rook_dest = {king_dest.x+1, 0,king_dest.belongs};
-    move_piece(king_orig, king_dest, true);
-  }
-  if (opt == 2) {
+    coord_t rook_dest = {king_orig-1, 0,king_orig.belongs};
+    move_piece(rook_orig, rook_dest, true);
+  } else  {
     coord_t rook_orig = {MAX_X-1, 0, king_orig.belongs};
-    coord_t king_dest = {king_orig.x+2,0,king_orig.belongs,};
-    coord_t rook_dest = {king_dest.x-1,0,king_dest.belongs,};
-    move_piece(king_orig, king_dest, true);
-  }
-}
-
-void check_castle(coord_t grid) {
-  if (current_piece->type == &king_type && !displaced(grid)) {
-    bool left = true;
-    bool right = true;
-    for (int i = 1; i < grid.x; i++) {
-      coord_t pos = {i, 0, grid.belongs};
-      if (get_piece(pos) != &default_piece) {
-        left = false;
-        break;
-      }
-    }
-    for (int j = 1; j < MAX_X-1; j++) {
-      coord_t pos = {grid.x+j,0,grid.belongs};
-      if (get_piece(pos) != &default_piece) {
-        right = false;
-        break;
-      }
-    }
-    if (left || right) {
-      unsigned short opt = ask_castle(left, right); //0: skip, 1: left, 2: right
-      castling(opt, grid);
-    }
+    coord_t rook_dest = {king_orig+1,0,king_orig.belongs,};
+    move_piece(rook_orig, rook_dest, true);
   }
 }
 
