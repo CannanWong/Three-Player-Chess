@@ -26,6 +26,7 @@ bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
         coord_t *moves = show_avail_move(curr);
         for (int i = 0; moves[i].x != 0; i++) {
             //moves[i] is now dest of the pseudo-legal move
+            //(determined by inspecting moves on tiles with own color pieces)
             //invoke in_check after move to check if it's legal
             move_piece(curr, moves[i], true);
             bool still_check = in_check(pl);
@@ -41,6 +42,7 @@ bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
 
 bool get_pieces_info(player_t *pl, int mode, coord_t *coord) {
     bool check = false;
+    //check own player board first to optimise search speeds at early stage
     player_t* pls[3] = {pl, adjacent(pl, true), adjacent(pl, false)};
     for (int k = 0; k < 2; k++) {
         for (int i = 0; i < MAX_X; i++) {
