@@ -9,10 +9,8 @@
 #include "chess.h"
 
 //global variables
-
 int server_socket = 0;
 int display_socket = 0;
-int client_socket[NUM_OF_PLAYERS] = {0};
 
 int display_port = 500;
 //multiplayer port = display port + 1
@@ -31,37 +29,34 @@ static char *get_local_ip() {
 
 void start_server() {
     memset(&server_addr, '0', sizeof(server_addr));
-
+    char *hostname = "game";
+    sethostname(hostname, sizeof(hostname));
     //get socket
     server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY); 
+    server_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST); 
     server_addr.sin_port = htons(display_port);
 
     bind(server_socket, (struct sockaddr*)&server_addr,sizeof(server_addr));
 
-    printf("loop\n");
-    for (int i = 0; i != 30; i++) {
-        if(listen(server_socket, 10) == -1){
-            printf("listen failed");
-            exit(EXIT_FAILURE);
-        } else {
-            break;
-        }
+    if(listen(server_socket, 10) == -1){
+        printf("listen failed");
+        exit(EXIT_FAILURE);
     }
 
-    printf("trying to connect\n");
     display_socket = accept(server_socket, (struct sockaddr*)&display_addr, &display_size);
 }
 
 void close_display() {
     char *msg_close_display;
     bool close_success = false;
-    for(int i = 0; i != 30; i++) {
+    for(int i = 0; i != 5; i++) {
         if (send(display_socket, msg_close_display, sizeof(msg_close_display), 0) == sizeof(msg_close_display)) {
             close_success = true;
             break;
+        } else {
+            sleep(1);
         }
     }
     if (!close_success) {
@@ -77,17 +72,4 @@ bool receive_msg(char *msg, int max_size) {
 
 bool send_msg(char *msg, int max_size) {
     return (send(display_socket, msg, max_size, 0)) != max_size;
-}
-
-int main() {
-    start_server();
-    char receive[40], send[40];
-
-    receive_msg(receive, sizeof(receive));
-    printf("receive: %s", receive);
-
-    scanf("%40s", send);
-    send_msg(send, sizeof(send));
-
-    close_display();
 }
