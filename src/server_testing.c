@@ -16,7 +16,7 @@ int main(void)
   struct sockaddr_in serv_addr;
  
   memset(recvBuff, '0' ,sizeof(recvBuff));
-  if((sockfd = socket(PF_INET, SOCK_STREAM, 0))< 0)
+  if((sockfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP))< 0)
     {
       printf("\n Error : Could not create socket \n");
       return 1;
@@ -24,7 +24,7 @@ int main(void)
  
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(500);
-  serv_addr.sin_addr.s_addr = inet_addr("146.169.167.9");
+  serv_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST);//htonl(INADDR_ANY);
  
   if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
     {
