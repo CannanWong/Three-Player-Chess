@@ -7,7 +7,7 @@
 coord_t *old_king = NULL;
 
 color is_checked(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
-    if (pc->type != &default_piece && pc->piece_color != pl->player_col) {
+    if (pc != &default_piece && pc->piece_color != pl->player_col) {
         coord_t *moves = show_avail_move(curr);
         for (int l = 0; moves[l].x != 0; l++) {
             //whenever any piece of the other two color has an available move
@@ -21,7 +21,7 @@ color is_checked(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
 }
 
 bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
-    if (pc->type != &default_piece && pc->piece_color == pl->player_col) {
+    if (pc != &default_piece && pc->piece_color == pl->player_col) {
         coord_t *moves = show_avail_move(curr);
         for (int i = 0; moves[i].x != 0; i++) {
             //moves[i] is now dest of the pseudo-legal move
@@ -113,7 +113,7 @@ bool draw() {
     return black_player.agree_draw && white_player.agree_draw && red_player.agree_draw;
 }
 //check if every player has agreed to draw 
-int game_state() {
+int game_state(player_t *win1, player_t *win2) {
     //if draw then game status draw
     //if !has_legal_moves {if check then status = checkmate else stalemate}
     //else continue as state = game
@@ -123,8 +123,6 @@ int game_state() {
         red_player.score += DRAW/10;
         return DRAW;
     } else if (!has_legal_moves(current_player)) {
-        player_t *win1 = NULL;
-        player_t *win2 = NULL;
         if (in_check(current_player, win1, win2)) {
             win1 -> score += CHECKMATE/10;
             if (win2 != NULL) {

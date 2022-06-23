@@ -4,21 +4,24 @@
 
 unsigned short player_num(player_t *pl) {
     if (pl == &black_player) {
-        return 0;
+        return BLACK;
     }
     if (pl == &white_player) {
-        return 1;
+        return WHITE;
     }
-    assert (pl == &red_player);
-    return 2;
+    if(pl == &red_player) {
+        return RED;
+    }
+    assert (pl == NULL);
+    return 0;
 }
 
 player_t* to_player(unsigned short code) {
     switch (code) {
-        case 0: return &black_player;
-        case 1: return &white_player;
+        case BLACK: return &black_player;
+        case WHITE: return &white_player;
         default: {
-            assert (code = 2);
+            assert (code = RED);
             return &red_player;
         }
     }
@@ -27,7 +30,7 @@ player_t* to_player(unsigned short code) {
 
 coord_t send_recv_coord(bool send) {
     coord_t pos;
-    char msg[MSG_SIZE] = {3,0,0};
+    char msg[MSG_SIZE] = {7,0,0};
     if (send) {
         send_msg(msg, MSG_SIZE*sizeof(char));
     }
@@ -55,6 +58,7 @@ bool check_valid(piece_t *pc) {
 }
 
 int main() {
+    int status = system("\"path\" width=640 height=480 isWindowedMode=true");
 
     char names[MSG_SIZE*NAME_SIZE];
     receive_msg(names, MSG_SIZE*NAME_SIZE*sizeof(char));
@@ -68,7 +72,32 @@ int main() {
     while (1) {
         init_chess_boards();
         current_player = &white_player;
-        while (game_state() == GAME) {
+        player_t *win1 = NULL;
+        player_t *win2 = NULL;
+        while (1) {
+
+            game_status = game_state(win1, win2);
+            //check if game has ended
+            if (game_status != GAME) {
+                //display game result
+                char msg_result[MSG_SIZE];
+                if (game_status == CHECKMATE) {
+                    msg_result[0] = 6;
+                    msg_result[1] = player_num(win1);
+                    msg_result[2] = player_num(win2);
+                } else {
+                    msg_result[0] = 5;
+                    if (game_status == STALEMATE) {
+                        msg_result[1] = 0;
+                    } else {
+                        assert (game_status == DRAW);
+                        msg_result[1] = 1;
+                    }
+                }
+                send_msg(msg_result, MSG_SIZE);
+                break;
+            }
+
             coord_t orig_grid;
             coord_t dest_grid;   
 
@@ -100,6 +129,12 @@ int main() {
             }
             next_player();
         }
+        //display scores
+        char msg_score[MSG_SIZE+1] = 
+        {1,black_player.score,white_player.score,red_player.score};
+        send_msg(msg_score, MSG_SIZE+1);
+
+        //continue next round or quit
         char ctn = 0;
         receive_msg(&ctn, sizeof(char));
         if (ctn == 0) {

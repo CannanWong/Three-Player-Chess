@@ -194,18 +194,25 @@ piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt2, piece_t* 
 }
 
 piece_t* ask_prom() {
-    char msg[MSG_SIZE] = {4,0,0};
+    char msg[MSG_SIZE] = {8,0,0};
     send_msg(msg, MSG_SIZE*sizeof(char));
     receive_msg(msg, MSG_SIZE*sizeof(char));
-    unsigned short code = msg[1];
-    switch (code) {
-        case 0: return &o_pawn_type;
-        case 1: return &bishop_type;
-        case 2: return &rook_type;
-        case 3: return &knight_type;
+    player_t *pl;
+    switch(msg[1]) {
+      case (BLACK): pl = &black_player;
+      case (WHITE): pl = &white_player;
+      default:
+        assert(msg[1] == RED);
+        pl = &red_player;
+    }
+    switch (msg[2]) {
+        case 0: return pl->o_pawn;
+        case 1: return pl->bishop;
+        case 2: return pl->rook;
+        case 3: return pl->knight;
         default: {
-            assert(code == 4);
-            return &queen_type;
+            assert(msg[2] == 4);
+            return pl->queen;
         }
     }
 }

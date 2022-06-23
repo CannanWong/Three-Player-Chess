@@ -18,27 +18,27 @@ player_t white_player = {false, WHITE, NULL, 0, NULL, NULL, NULL, NULL, NULL, NU
 player_t red_player = {false, RED, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 static void init_player(player_t *current_player, char *name) {
-    current_player->name = (char*) malloc(MAX_NAME_SIZE);
+    current_player->name = malloc(MAX_NAME_SIZE);
     current_player->name = name;
-    current_player->i_pawn = (char*) malloc(sizeof(piece_t));
+    current_player->i_pawn = malloc(sizeof(piece_t));
     current_player->i_pawn->piece_color = current_player->player_col;
     current_player->i_pawn->type = &i_pawn_type;
-    current_player->o_pawn = (char*) malloc(sizeof(piece_t));
+    current_player->o_pawn = malloc(sizeof(piece_t));
     current_player->o_pawn->piece_color = current_player->player_col;
     current_player->o_pawn->type = &o_pawn_type; 
-    current_player->bishop = (char*) malloc(sizeof(piece_t));
+    current_player->bishop = malloc(sizeof(piece_t));
     current_player->bishop->piece_color = current_player->player_col;  
     current_player->bishop->type = &bishop_type;
-    current_player->rook = (char*) malloc(sizeof(piece_t)); 
+    current_player->rook = malloc(sizeof(piece_t)); 
     current_player->rook->piece_color = current_player->player_col; 
     current_player->rook->type = &rook_type;
-    current_player->knight = (char*) malloc(sizeof(piece_t)); 
+    current_player->knight = malloc(sizeof(piece_t)); 
     current_player->knight->piece_color = current_player->player_col; 
     current_player->knight->type = &knight_type;
-    current_player->queen = (char*) malloc(sizeof(piece_t)); 
+    current_player->queen = malloc(sizeof(piece_t)); 
     current_player->queen->piece_color = current_player->player_col; 
     current_player->queen->type = &queen_type;
-    current_player->king = (char*) malloc(sizeof(piece_t));  
+    current_player->king = malloc(sizeof(piece_t));  
     current_player->king->piece_color = current_player->player_col; 
     current_player->king->type = &king_type;
 }
@@ -49,27 +49,28 @@ void init_players(char *player_names[NUM_OF_PLAYERS]) {
     init_player(&red_player, player_names[2]);
 }
 
-static void init_player_board(piece_t *board[MAX_X][MAX_Y], player_t *player) {
-    piece_t *current_board[MAX_X][MAX_Y] = {{&default_piece}}; 
-    for (int x = 0; x != MAX_X; x++) {
-        current_board[x][1] = &player->i_pawn;
-    } 
-    current_board[0][0] = &player->rook;
-    current_board[7][0] = &player->rook;
-    current_board[1][0] = &player->knight;
-    current_board[6][0] = &player->knight;
-    current_board[2][0] = &player->bishop;
-    current_board[5][0] = &player->bishop;
-    current_board[3][0] = &player->king;
-    current_board[4][0] = &player->queen;
+static void init_player_board(piece_t *current_board[MAX_X][MAX_Y], player_t *player) {
 
-    board = current_board;
+    for (int x = 0; x != MAX_X; x++) {
+        current_board[x][1] = player->i_pawn;
+        for (int y = 2; y < 4; y++) {
+            current_board[x][y] = &default_piece;
+        }
+    } 
+    current_board[0][0] = player->rook;
+    current_board[7][0] = player->rook;
+    current_board[1][0] = player->knight;
+    current_board[6][0] = player->knight;
+    current_board[2][0] = player->bishop;
+    current_board[5][0] = player->bishop;
+    current_board[4][0] = player->king;
+    current_board[3][0] = player->queen;
 }
 
 void init_chess_boards() {
-    init_player_board(&board.black_region, &black_player);
-    init_player_board(&board.white_region, &white_player);
-    init_player_board(&board.red_region, &red_player);
+    init_player_board(board.black_region, &black_player);
+    init_player_board(board.white_region, &white_player);
+    init_player_board(board.red_region, &red_player);
 }
 
 /*
