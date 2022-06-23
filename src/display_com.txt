@@ -5,7 +5,7 @@ normal location:
 region number, x_value, y_value
 
 request location:
-3,0,0
+7,0,0
 
 orig location:
 normal location
@@ -17,10 +17,10 @@ location:
 normal location
 
 promotion request :
-4,0,0
+8,0,0
 
 piece to promote:
-4,x,0 
+8,x,0 
 (x: 0--o_pawn; 1--bishop; 2--rook; 3--knight; 4--queen)
 
 startgame:
