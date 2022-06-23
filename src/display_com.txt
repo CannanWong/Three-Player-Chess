@@ -31,3 +31,6 @@ continue:
 
 end:
 0
+
+next player (rotate board by 1/3 circle)
+5

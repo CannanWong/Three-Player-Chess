@@ -9,7 +9,7 @@
 #define TOTAL_NUM_OF_PIECES 16
 
 //Enumerations
-typedef enum {BLACK = 0, WHITE = 1, RED = 2, NO_COLOR = -1} color;
+typedef enum {BLACK = 2, WHITE = 3, RED = 4, NO_COLOR = -1} color;
 typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
 
 //=======================================================================================================
@@ -95,12 +95,14 @@ extern bool *moved_index;
 void init_players(char**);
 void init_chess_boards();
 player_t* adjacent(player_t*, bool);
-piece_t *get_piece(coord_t);
+piece_t* get_piece(coord_t);
+player_t* get_player(color);
 bool coord_equals(coord_t, coord_t);
 coord_t move_vector(bool, coord_t, signed short, signed short);
 coord_t *show_avail_move(coord_t);
-bool move_piece(coord_t, coord_t, bool); //bool (is_castle) only set to true when called by castling()
-bool click_draw(player_t*);
+bool movable(coord_t, coord_t*);
+piece_t* move_piece(coord_t, coord_t, bool*, bool*);
+piece_t* revert_move(coord_t, coord_t, bool, bool);
 
 void castling(coord_t, bool);
 void check_prom(coord_t);
@@ -110,7 +112,6 @@ bool send_msg(char*, int);
 
 void terminate();
 void next_player();
-coord_t get_player_input();
 bool in_check();
 bool has_legal_moves();
 bool draw();

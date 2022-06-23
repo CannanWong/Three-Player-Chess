@@ -112,7 +112,7 @@ coord_t move_y(coord_t orig, signed short dy, bool* in_boundary) {
   return dest;
 }
 
-coord_t calc_vector(bool x_first, coord_t orig, signed short dx, signed short dy) {
+coord_t move_vector(bool x_first, coord_t orig, signed short dx, signed short dy) {
   coord_t dest;
   bool in_boundary = true;
   if (x_first) {
@@ -176,23 +176,38 @@ bool movable(coord_t dest, coord_t *avails) {
   return false;
 }
 
-piece_t* move_piece(coord_t orig, coord_t dest) {
-  get_moved_index(orig, current_piece);
-  if (moved_index != NULL) {
-    *moved_index = true; //orig
+piece_t* move_piece(coord_t orig, coord_t dest, bool *alt_orig, bool *alt_dest) {
+  if (alt_orig != NUL) {
+    get_moved_index(orig, current_piece);
+    if (moved_index != NULL && !*moved_index) {
+      *moved_index = true; //orig
+      *alt_orig = true;
+    }
   }
-  get_moved_index(dest, current_piece);
-  if (moved_index != NULL) {
-    *moved_index = true; //dest
+  piece_t* attacked = get_piece(dest);
+  if (alt_dest != NULL) {
+    get_moved_index(dest, attacked);
+    if (moved_index != NULL && !*moved_index) {
+      *moved_index = true; //dest
+      *alt_dest = true;
+    }
   }
-
-  attacked = get_piece(dest);
   set_piece(dest, current_piece);
   set_piece(orig, &default_piece);
+  return attacked;
+}
+
+piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt1, piece_t* attacked) {
+  set_piece(orig, current_piece);
+  set_piece(dest, attacked);
+  if (alt1) {
+    *get_moved_index(orig, current_piece) = false;
   }
+  if (alt2) {
+    *get_moved_index(dest, attacked) = false;
 
-piece_t* revert_move(coord_t orig, coord_t dest) {
-
+  }
+  return current_piece;
 }
 
 piece_t* ask_prom() {
@@ -237,7 +252,9 @@ void castling(bool left, coord_t king_orig) {
   }
 }
 
-void turn_board() {
-  current_player = adjacent(current_player, false); 
+void next_player() {
+  current_player = adjacent(current_player, false);
+  char *msg = 5;
+  send_msg(msg, sizeof(char));
 }
 

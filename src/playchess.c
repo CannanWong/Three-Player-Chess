@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #define MSG_SIZE 3
+#define NAME_SIZE 16
 
 unsigned short player_num(player_t *pl) {
     if (pl == &black_player) {
@@ -57,36 +58,33 @@ bool check_valid(piece_t *pc) {
 }
 
 int main() {
-    char *players[] = {"Andy", "Beth", "Chad"};
+
+    char names[MSG_SIZE*NAME_SIZE];
+    receive_msg(names, MSG_SIZE*NAME_SIZE*sizeof(char));
+
+    char *players[MSG_SIZE];
+    for (int i = 0; i < MSG_SIZE; i++) {
+        memcpy(players[i], &names[i*NAME_SIZE], NAME_SIZE); 
+    }
+
     init_players(players);
     while (1) {
         init_chess_boards();
-        while (1) {
+        current_player = &white_player;
+        while (game_state() == GAME) {
             coord_t orig_grid;
-            coord_t dest_grid;
-            
+            coord_t dest_grid;   
+
             while (1) {
-                bool action = false;
                 orig_grid = send_recv_coord(true);
                 current_piece = get_piece(orig_grid);
                 if (check_valid(current_piece)){
-                    while (1) {
-                        curr_avail_moves = show_avail_move(curr_grid);
-                        send_avail_moves();
-                        dest_grid = send_recv_coord(false);
+                    curr_avail_moves = show_avail_move(curr_grid);
+                    send_avail_moves();
+                    dest_grid = send_recv_coord(false);
 
-                        if (move_piece(orig_grid, dest_grid, false)) {
-                            action = true;
-                            break;
-                        }else {
-                            current_piece = get_piece(dest_grid);
-                            if (!check_valid(current_piece)) {
-                                break;
-                            }
-                        }
-                        orig_grid = dest_grid;
-                    }
-                    if (action) {
+                    if (movable(dest_grid, curr_avail_moves)) {
+                        move_piece(orig_grid, dest, NULL, NULL);
                         //check castling
                         if (current_piece->type == &king_type) {
                             signed short dx = dest_grid.x - orig_grid.x;
@@ -100,22 +98,20 @@ int main() {
                         //check promotion
                         check_prom(dest_grid);
                         break;
-                    }
+                    }                   
                 }
             }
-            int game_status = game_state();
-            switch (game_status)
-                {
-                case CHECKMATE:
-                    current_player->score += CHECKMATE/10;
-                    break;
-                case STALEMATE:
-
-                    break;
-                }
-
             next_player();
         }
+        char ctn = 0;
+        receive_msg(&ctn, sizeof(char));
+        if (ctn == 0) {
+            //end game
+            break;
+        }
+        assert (ctn == 1);
+        //next round
     }
-
+    
+    terminate();
 }
