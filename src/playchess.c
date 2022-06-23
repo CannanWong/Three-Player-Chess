@@ -58,24 +58,19 @@ bool check_valid(piece_t *pc) {
 }
 
 int main() {
-    int status = system("\"path\" width=640 height=480 isWindowedMode=true");
-
-    char names[MSG_SIZE*NAME_SIZE];
-    receive_msg(names, MSG_SIZE*NAME_SIZE*sizeof(char));
-
-    char *players[MSG_SIZE];
-    for (int i = 0; i < MSG_SIZE; i++) {
-        memcpy(players[i], &names[i*NAME_SIZE], NAME_SIZE); 
-    }
-
-    init_players(players);
+    //int status = system("\"path\" width=640 height=480 isWindowedMode=true");
+    start_server();
+    receive_msg(NULL, NAME_SIZE*sizeof(char));
+    char *names[MSG_SIZE] = {"Andy", "Jesh", "Jiaju"};
+    init_players(names);
     while (1) {
         init_chess_boards();
         current_player = &white_player;
         player_t *win1 = NULL;
         player_t *win2 = NULL;
         while (1) {
-
+            char msg_draw[1];
+            receive_msg(msg_draw, sizeof(char));
             game_status = game_state(win1, win2);
             //check if game has ended
             if (game_status != GAME) {
