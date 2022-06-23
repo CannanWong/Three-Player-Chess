@@ -29,8 +29,6 @@ static char *get_local_ip() {
 
 void start_server() {
     memset(&server_addr, '0', sizeof(server_addr));
-    char *hostname = "game";
-    sethostname(hostname, sizeof(hostname));
     //get socket
     server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
