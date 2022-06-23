@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #define MAX_X 8
 #define MAX_Y 4
+#define MSG_SIZE 3
+#define MAX_MOVES 64
 #define NUM_OF_PLAYERS 3
 #define TOTAL_NUM_OF_PIECES 16
 
@@ -102,7 +105,7 @@ coord_t move_vector(bool, coord_t, signed short, signed short);
 coord_t *show_avail_move(coord_t);
 bool movable(coord_t, coord_t*);
 piece_t* move_piece(coord_t, coord_t, bool*, bool*);
-piece_t* revert_move(coord_t, coord_t, bool, bool);
+piece_t* revert_move(coord_t, coord_t, bool, bool, piece_t*);
 
 void castling(coord_t, bool);
 void check_prom(coord_t);

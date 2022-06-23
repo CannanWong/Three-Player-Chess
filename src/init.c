@@ -3,14 +3,14 @@
 #define NUM_OF_PAWNS 8
 #define MAX_NAME_SIZE 32
 
-piece_t default_piece = {NO_COL, NULL};
-piece_type_t i_pawn_type = {true, {{0, 1}}};
-piece_type_t o_pawn_type = {true, {{0, -1}}};
-piece_type_t knight_type = {true, {{1, 2}, {2, 1}, {1, -2}, {-2, 1}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
-piece_type_t king_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
-piece_type_t queen_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
-piece_type_t rook_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}}; 
-piece_type_t bishop_type = {false, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+const piece_t default_piece = {NO_COLOR, NULL};
+const piece_type_t i_pawn_type = {true, {{0, 1}}};
+const piece_type_t o_pawn_type = {true, {{0, -1}}};
+const piece_type_t knight_type = {true, {{1, 2}, {2, 1}, {1, -2}, {-2, 1}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
+const piece_type_t king_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+const piece_type_t queen_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+const piece_type_t rook_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}}; 
+const piece_type_t bishop_type = {false, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
 
 //agree_draw, player_color, name, score, i_pawn, o_pawn, bishop, rook, knight, queen, king
 player_t black_player = {false, BLACK, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -49,7 +49,7 @@ void init_players(char *player_names[NUM_OF_PLAYERS]) {
     init_player(&red_player, player_names[2]);
 }
 
-static void init_player_board(piece_t *current_board[MAX_X][MAX_Y], player_t *player) {
+static void init_player_board(piece_t *board[MAX_X][MAX_Y], player_t *player) {
     piece_t *current_board[MAX_X][MAX_Y] = {{&default_piece}}; 
     for (int x = 0; x != MAX_X; x++) {
         current_board[x][1] = &player->i_pawn;
@@ -62,6 +62,8 @@ static void init_player_board(piece_t *current_board[MAX_X][MAX_Y], player_t *pl
     current_board[5][0] = &player->bishop;
     current_board[3][0] = &player->king;
     current_board[4][0] = &player->queen;
+
+    board = current_board;
 }
 
 void init_chess_boards() {

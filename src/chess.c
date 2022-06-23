@@ -1,5 +1,4 @@
 #include "chess.h"
-#include <stdio.h>
 
 #define IS_CHECKED 0
 #define LEGAL_MOVE 1
@@ -32,7 +31,7 @@ bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
             piece_t* attacked = move_piece(curr, moves[i], &alt_orig, &alt_dest);
             bool still_check = in_check(pl);
             //reset board (not sure if this is safe)
-            revert_piece((curr, move[i], alt_orig, alt_dest, attacked));
+            revert_move(curr, moves[i], alt_orig, alt_dest, attacked);
             if (!still_check) {
                 return true;
             }
@@ -41,9 +40,10 @@ bool legal_move(player_t *pl, coord_t curr, piece_t *pc) {
     return false;
 }
 
-bool get_pieces_info(player_t *pl, int mode, coord_t *coord, color *win1, color *win2) {
+bool get_pieces_info(player_t *pl, int mode, coord_t *coord, player_t *win1, player_t *win2) {
     player_t* pls[3] = {pl, adjacent(pl, true), adjacent(pl, false)};
     color rest = NO_COLOR;
+    bool check;
     for (int k = 0; k < 2; k++) {
         for (int i = 0; i < MAX_X; i++) {
             for (int j = 0; j < MAX_Y; j++) {
@@ -53,20 +53,21 @@ bool get_pieces_info(player_t *pl, int mode, coord_t *coord, color *win1, color 
                 //Following is the logic part
                 switch (mode) {
                     case IS_CHECKED:
-                        if (*win1 != NO_COLOR) {
+                        if (win1 != NULL) {
                             if (pc->piece_color == rest) {
-                                *win2 = is_checked(pl, curr, pc, coord);
-                                if (*win2 != NO_COLOR) {
+                                color col = is_checked(pl, curr, pc, coord);
+                                if (col != NO_COLOR) {
+                                    win2 = get_player(col);
                                     return true;
                                 }
                             }
                         } else {
-                            *win1 = is_checked(pl, curr, pc, coord);
-                            if (*win1 != NO_COLOR) {
-                                if (adjacent(pl, true) == get_player(check)) {
-                                    rest = adjacent(p1, false);
+                            color col = is_checked(pl, curr, pc, coord);
+                            if (col != NO_COLOR) {
+                                if (adjacent(pl, true) == win1) {
+                                    rest = adjacent(pl, false)->player_col;
                                 } else {
-                                    rest = adjacent(p1, true;);
+                                    rest = adjacent(pl, true)->player_col;
                                 }
                             }
                         }
@@ -85,10 +86,10 @@ bool get_pieces_info(player_t *pl, int mode, coord_t *coord, color *win1, color 
             }
         }
     }
-    return (win1 == NULL || *win1 != NO_COLOR);
+    return (win1 == NULL);
 }
 
-bool in_check(player_t *pl, color *win1, color *win1) {
+bool in_check(player_t *pl, player_t *win1, player_t *win2) {
     //Optimisation for multiple "check" checks during legal_moves
     //prevents searching for king everytime, search only if king itself moves
     coord_t *king;
@@ -122,14 +123,14 @@ int game_state() {
         red_player.score += DRAW/10;
         return DRAW;
     } else if (!has_legal_moves(current_player)) {
-        color win1 = NO_COLOR;
-        color win2 = NO_COLOR;
-        if (in_check(current_player, &win1, &win2)) {
-            win -> score += CHECKMATE/10;
-            if (win2 != NO_COLOR) {
-                get_player(win2) -> score += CHECKMATE/10;
+        player_t *win1 = NULL;
+        player_t *win2 = NULL;
+        if (in_check(current_player, win1, win2)) {
+            win1 -> score += CHECKMATE/10;
+            if (win2 != NULL) {
+                win2 -> score += CHECKMATE/10;
             } else {
-                get_player(win2) -> score += STALEMATE/10;
+                win2 -> score += STALEMATE/10;
             }
             return CHECKMATE;
         } else {

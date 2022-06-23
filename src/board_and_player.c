@@ -63,13 +63,9 @@ void set_piece(coord_t grid, piece_t* pc) {
   board.red_region[grid.x][grid.y] = pc;
 }
 
+
 coord_t move_x(coord_t orig, signed short dx, bool* in_boundary) {
-  short new_x;
-  if (orig.belongs->player_col == current_piece->piece_color) {
-    new_x = orig.x + dx;
-  } else {
-    new_x = orig.x - dx;
-  }
+  unsigned short new_x = orig.x + dx;
   if(new_x < 0 || new_x >= MAX_X) { 
     in_boundary = false;
   }
@@ -79,33 +75,20 @@ coord_t move_x(coord_t orig, signed short dx, bool* in_boundary) {
 
 coord_t move_y(coord_t orig, signed short dy, bool* in_boundary) {
   coord_t dest;
-  short new_y;
-  if (orig.belongs->player_col == current_piece->piece_color) {
-    newy_y = orig.y+dy
-    if (new_y < MAX_Y) {
-      dest.y = new_y;
-      dest.x = orig.x;
-      dest.belongs = orig.belongs;
-    } else {
-      if (orig.x < MAX_X/2) {
-        dest.belongs = adjacent(orig.belongs, true);
-      } else {
-        dest.belongs = adjacent(orig.belongs, false);
-      }
-      dest.y = 2 * MAX_Y - 1 - new_y;
-      dest.x = MAX_X - 1 - orig.x;
-    }
+  unsigned short new_y = orig.y + dy;
+  if (new_y < MAX_Y) {
+    dest.y = new_y;
+    dest.x = orig.x;
+    dest.belongs = orig.belongs;
   } else {
-    new_y = orig.y-dy;
-    if (new_y < MAX_Y) {
-      dest.y = new_y;
-      dest.x = orig.x;
-      dest.belongs = orig.belongs;
+    if (orig.x < MAX_X/2) {
+      dest.belongs = adjacent(orig.belongs, true);
     } else {
-      dest.belongs = 
+      dest.belongs = adjacent(orig.belongs, false);
     }
+    dest.y = 2 * MAX_Y - 1 - new_y;
+    dest.x = MAX_X - 1 - orig.x;
   }
-
   if (new_y < 0 || new_y >= 2 * MAX_Y) {
     in_boundary = false;
   }
@@ -126,6 +109,7 @@ coord_t move_vector(bool x_first, coord_t orig, signed short dx, signed short dy
   }
   return dest;
 }
+
 
 bool click_draw(player_t *pl) {
   pl->agree_draw = true;
@@ -177,7 +161,7 @@ bool movable(coord_t dest, coord_t *avails) {
 }
 
 piece_t* move_piece(coord_t orig, coord_t dest, bool *alt_orig, bool *alt_dest) {
-  if (alt_orig != NUL) {
+  if (alt_orig != NULL) {
     get_moved_index(orig, current_piece);
     if (moved_index != NULL && !*moved_index) {
       *moved_index = true; //orig
@@ -197,7 +181,7 @@ piece_t* move_piece(coord_t orig, coord_t dest, bool *alt_orig, bool *alt_dest) 
   return attacked;
 }
 
-piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt1, piece_t* attacked) {
+piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt2, piece_t* attacked) {
   set_piece(orig, current_piece);
   set_piece(dest, attacked);
   if (alt1) {
@@ -205,7 +189,6 @@ piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt1, piece_t* 
   }
   if (alt2) {
     *get_moved_index(dest, attacked) = false;
-
   }
   return current_piece;
 }
@@ -240,21 +223,21 @@ void check_prom(coord_t grid) {
   }
 }
 
-void castling(bool left, coord_t king_orig) {
+void castling(coord_t king_orig, bool left) {
   if (left) {
     coord_t rook_orig = {0, 0, king_orig.belongs};
-    coord_t rook_dest = {king_orig-1, 0,king_orig.belongs};
-    move_piece(rook_orig, rook_dest, true);
+    coord_t rook_dest = {king_orig.x-1, 0,king_orig.belongs};
+    move_piece(rook_orig, rook_dest, NULL, NULL);
   } else  {
     coord_t rook_orig = {MAX_X-1, 0, king_orig.belongs};
-    coord_t rook_dest = {king_orig+1,0,king_orig.belongs,};
-    move_piece(rook_orig, rook_dest, true);
+    coord_t rook_dest = {king_orig.x+1,0,king_orig.belongs,};
+    move_piece(rook_orig, rook_dest, NULL, NULL);
   }
 }
 
 void next_player() {
   current_player = adjacent(current_player, false);
-  char *msg = 5;
+  char msg[1] = {5};
   send_msg(msg, sizeof(char));
 }
 

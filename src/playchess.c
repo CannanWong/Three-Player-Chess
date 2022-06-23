@@ -1,8 +1,5 @@
 #include "chess.h"
-#include <stdlib.h>
-#include <stdio.h>
 
-#define MSG_SIZE 3
 #define NAME_SIZE 16
 
 unsigned short player_num(player_t *pl) {
@@ -16,7 +13,7 @@ unsigned short player_num(player_t *pl) {
     return 2;
 }
 
-unsigned short to_player(unsigned short code) {
+player_t* to_player(unsigned short code) {
     switch (code) {
         case 0: return &black_player;
         case 1: return &white_player;
@@ -30,8 +27,8 @@ unsigned short to_player(unsigned short code) {
 
 coord_t send_recv_coord(bool send) {
     coord_t pos;
+    char msg[MSG_SIZE] = {3,0,0};
     if (send) {
-        char msg[MSG_SIZE] = {3,0,0};
         send_msg(msg, MSG_SIZE*sizeof(char));
     }
     receive_msg(msg, MSG_SIZE*sizeof(char));
@@ -79,20 +76,20 @@ int main() {
                 orig_grid = send_recv_coord(true);
                 current_piece = get_piece(orig_grid);
                 if (check_valid(current_piece)){
-                    curr_avail_moves = show_avail_move(curr_grid);
+                    curr_avail_moves = show_avail_move(orig_grid);
                     send_avail_moves();
                     dest_grid = send_recv_coord(false);
 
                     if (movable(dest_grid, curr_avail_moves)) {
-                        move_piece(orig_grid, dest, NULL, NULL);
+                        move_piece(orig_grid, dest_grid, NULL, NULL);
                         //check castling
                         if (current_piece->type == &king_type) {
                             signed short dx = dest_grid.x - orig_grid.x;
                             if (dx == -2) {
-                                castling(true, orig_grid);
+                                castling(orig_grid, true);
                             }
                             if (dx == 2) {
-                                castling(false, orig_grid);
+                                castling(orig_grid, false);
                             }
                         }
                         //check promotion

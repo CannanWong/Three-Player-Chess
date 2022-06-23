@@ -1,11 +1,10 @@
 #include "chess.h"
-#define MAX_MOVES 64
 
 static bool is_valid(coord_t current_coord) {
     return (current_coord.x != MAX_X && current_coord.y != MAX_Y);
 }
 
-static bool coord_equals(coord_t coord1, coord_t coord2) {
+bool coord_equals(coord_t coord1, coord_t coord2) {
     return coord1.belongs == coord2.belongs && coord1.x == coord2.x && coord1.y == coord2.y;
 }
 
@@ -16,7 +15,7 @@ coord_t* show_avail_move(coord_t piece_coord) {
     short *current_vec = NULL; 
     for (int i = 0; current_piece->type->move_vec[i]; i++) {
         coord_t current_coord = piece_coord;
-        current_vec = &current_piece->type->move_vec[0];
+        current_vec = current_piece->type->move_vec[0];
         coord_t buffer = move_vector(true, current_coord, current_vec[0], current_vec[1]);
         bool change_boarder  = false;
         bool changed_once = false;
