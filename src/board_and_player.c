@@ -25,13 +25,13 @@ player_t* adjacent(player_t *self, bool prev) {
 }
 
 player_t* get_player(color col) {
-  if (col = BLACK) {
+  if (col == BLACK) {
     return &black_player;
   }
-  if (col = WHITE) {
+  if (col == WHITE) {
     return &white_player;
   }
-  assert (col = RED);
+  assert (col == RED);
   return &red_player;
 }
 
@@ -108,13 +108,6 @@ coord_t move_vector(bool x_first, coord_t orig, signed short dx, signed short dy
     return DEFAULT_COORD;
   }
   return dest;
-}
-
-
-bool click_draw(player_t *pl) {
-  pl->agree_draw = true;
-  num_draw++;
-  return true;
 }
 
 bool* get_moved_index(coord_t grid, piece_t *pc) {

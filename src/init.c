@@ -3,19 +3,19 @@
 #define NUM_OF_PAWNS 8
 #define MAX_NAME_SIZE 32
 
-const piece_t default_piece = {NO_COLOR, NULL};
-const piece_type_t i_pawn_type = {true, {{0, 1}}};
-const piece_type_t o_pawn_type = {true, {{0, -1}}};
-const piece_type_t knight_type = {true, {{1, 2}, {2, 1}, {1, -2}, {-2, 1}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
-const piece_type_t king_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
-const piece_type_t queen_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
-const piece_type_t rook_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}}; 
-const piece_type_t bishop_type = {false, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+piece_t default_piece = {NO_COLOR, NULL};
+piece_type_t i_pawn_type = {true, {{0, 1}}};
+piece_type_t o_pawn_type = {true, {{0, -1}}};
+piece_type_t knight_type = {true, {{1, 2}, {2, 1}, {1, -2}, {-2, 1}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
+piece_type_t king_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+piece_type_t queen_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+piece_type_t rook_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}}; 
+piece_type_t bishop_type = {false, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
 
 //agree_draw, player_color, name, score, i_pawn, o_pawn, bishop, rook, knight, queen, king
-player_t black_player = {false, BLACK, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-player_t white_player = {false, WHITE, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-player_t red_player = {false, RED, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+player_t black_player = {BLACK, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+player_t white_player = {WHITE, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+player_t red_player = {RED, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 static void init_player(player_t *current_player, char *name) {
     current_player->name = malloc(MAX_NAME_SIZE);

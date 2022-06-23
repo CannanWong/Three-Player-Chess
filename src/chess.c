@@ -13,7 +13,7 @@ color is_checked(player_t *pl, coord_t curr, piece_t *pc, coord_t *king) {
             //whenever any piece of the other two color has an available move
             //which has the same coord as the king, checked
             if (coord_equals(moves[l], *king)) {
-                pc -> piece_color;
+                return (pc -> piece_color);
             }
         }
     }
@@ -92,14 +92,14 @@ bool get_pieces_info(player_t *pl, int mode, coord_t *coord, player_t *win1, pla
 bool in_check(player_t *pl, player_t *win1, player_t *win2) {
     //Optimisation for multiple "check" checks during legal_moves
     //prevents searching for king everytime, search only if king itself moves
-    coord_t *king;
-    if (old_king == NULL || get_piece(*old_king)->type != &king_type) {
-        bool check = get_pieces_info(pl, GET_KING, king, NULL, NULL);
-        assert(check);
-    } else {
+    coord_t *king = NULL;
+    if (old_king != NULL && get_piece(*old_king)->type == &king_type) {
         //old_king points to coord_t of current king
         //so no pointer refs..?
         king = old_king;
+    } else {
+        bool check = get_pieces_info(pl, GET_KING, king, NULL, NULL);
+        assert(check);
     }
     return get_pieces_info(pl, IS_CHECKED, king, win1, win2);
 }
@@ -109,20 +109,20 @@ bool has_legal_moves(player_t *pl) {
     return get_pieces_info(pl, LEGAL_MOVE, NULL, NULL, NULL);
 }
 //check for every piece in players command if piece has legal move, on first legal move break, else proceed with 0 counter, if counter == 0 than no legal moves
-bool draw() {
-    return black_player.agree_draw && white_player.agree_draw && red_player.agree_draw;
+
+status draw() {
+    black_player.score += DRAW/10;
+    white_player.score += DRAW/10;
+    red_player.score += DRAW/10;
+    return DRAW;
 }
+
 //check if every player has agreed to draw 
-int game_state(player_t *win1, player_t *win2) {
+status game_state(player_t *win1, player_t *win2) {
     //if draw then game status draw
     //if !has_legal_moves {if check then status = checkmate else stalemate}
     //else continue as state = game
-    if (draw()) {
-        black_player.score += DRAW/10;
-        white_player.score += DRAW/10;
-        red_player.score += DRAW/10;
-        return DRAW;
-    } else if (!has_legal_moves(current_player)) {
+    if (!has_legal_moves(current_player)) {
         if (in_check(current_player, win1, win2)) {
             win1 -> score += CHECKMATE/10;
             if (win2 != NULL) {

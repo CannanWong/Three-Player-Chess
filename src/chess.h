@@ -10,6 +10,8 @@
 #define MAX_MOVES 64
 #define NUM_OF_PLAYERS 3
 #define TOTAL_NUM_OF_PIECES 16
+#define MAX_VEC 8
+#define DIMENSION 2
 
 //Enumerations
 typedef enum {BLACK = 2, WHITE = 3, RED = 4, NO_COLOR = -1} color;
@@ -22,7 +24,7 @@ typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
 typedef struct piece_type {
   bool single_move;
   //x then y
-  short *(move_vec[2]);
+  short move_vec[MAX_VEC][DIMENSION];
 } piece_type_t;
 
 //Type definiations
@@ -33,14 +35,14 @@ typedef struct chess_piece {
 
 
 //global variables
-extern const piece_type_t i_pawn_type;
-extern const piece_type_t o_pawn_type; 
-extern const piece_type_t rook_type;
-extern const piece_type_t knight_type;
-extern const piece_type_t king_type;
-extern const piece_type_t queen_type;
-extern const piece_type_t bishop_type;
-extern const piece_t default_piece;
+extern piece_type_t i_pawn_type;
+extern piece_type_t o_pawn_type; 
+extern piece_type_t rook_type;
+extern piece_type_t knight_type;
+extern piece_type_t king_type;
+extern piece_type_t queen_type;
+extern piece_type_t bishop_type;
+extern piece_t default_piece;
 
 //=======================================================================================================
 
@@ -48,7 +50,6 @@ extern const piece_t default_piece;
 
 //request draw trigger interrupt
 typedef struct chess_player { 
-  bool agree_draw;
   color player_col;
   char *name;
   unsigned int score;
@@ -110,7 +111,7 @@ piece_t* revert_move(coord_t, coord_t, bool, bool, piece_t*);
 void castling(coord_t, bool);
 void check_prom(coord_t);
 
-bool start_server();
+void start_server();
 bool receive_msg(char*, int);
 bool send_msg(char*, int);
 
@@ -118,8 +119,8 @@ void terminate();
 void next_player();
 bool in_check();
 bool has_legal_moves();
-bool draw();
-int game_state();
+status draw();
+status game_state();
 bool displaced(coord_t);
 void close_game();
 

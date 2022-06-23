@@ -71,6 +71,7 @@ int main() {
         while (1) {
             char msg_draw[1];
             receive_msg(msg_draw, sizeof(char));
+            
             game_status = game_state(win1, win2);
             //check if game has ended
             if (game_status != GAME) {
