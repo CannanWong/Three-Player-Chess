@@ -6,9 +6,9 @@ PROGS   = all
 
 .PHONY: all clean
 
-all: tpchess
+all: playchess
 
-tpchess: playchess.o chess.o board_and_player.o during_game.o init.o terminate_game.o network.o 
+playchess: playchess.o chess.o board_and_player.o during_game.o init.o terminate_game.o network.o 
 
 playchess.o: chess.h
 
@@ -26,4 +26,4 @@ network.o: chess.h
 
 clean:
 	rm -f $(wildcard *.o)
-	rm -f tpchess
+	rm -f playchess
