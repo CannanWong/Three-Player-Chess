@@ -66,6 +66,4 @@ Identify signal type by first digit{wt 5-
   0: quit game
   1: next round
   5: draw
-  7: get location
-  8. get promotion piece
 }
