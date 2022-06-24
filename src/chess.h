@@ -107,6 +107,13 @@ coord_t *show_avail_move(coord_t);
 bool movable(coord_t, coord_t*);
 piece_t* move_piece(coord_t, coord_t, bool*, bool*);
 piece_t* revert_move(coord_t, coord_t, bool, bool, piece_t*);
+char *get_local_ip();
+
+
+extern char device_ip[16];
+extern int server_socket;
+extern int display_socket;
+const int display_port = 500;
 
 void castling(coord_t, bool);
 char check_prom(coord_t);

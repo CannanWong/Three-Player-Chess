@@ -2,6 +2,8 @@
 
 #define NAME_SIZE 16
 
+char *device_ip = NULL;
+
 unsigned short player_num(player_t *pl) {
     if (pl == &black_player) {
         return BLACK;
@@ -46,6 +48,10 @@ bool check_valid(piece_t *pc) {
 
 int main() {
     //int status = system("\"path\" width=640 height=480 isWindowedMode=true");
+    device_ip = get_local_ip();
+    if (device_ip == NULL) {
+        return 0;
+    }
     start_server();
     receive_msg(NULL, NAME_SIZE*sizeof(char));
     char *names[MSG_SIZE] = {"Andy", "Jesh", "Jiaju"};
