@@ -20,7 +20,7 @@
 
 int server_socket = 0;
 int display_socket = 0;
-const int display_port = 500;
+
 
 //=======================================================================================================
 //helper functions
@@ -32,12 +32,12 @@ char *get_local_ip() {
     local_info = gethostbyname(buffer);
     return inet_ntoa(*((struct in_addr*)local_info->h_addr_list[0]));
 }
-
+/*
 static bool connect_to_stream_server_(char *server_ip, int port_num, int *client_socket) {
     struct sockaddr_in server_addr;
 
-    client_socket = socket(PF_INET, SOCK_STREAM, 0);
-    if (client_socket < 0) {
+    *client_socket = socket(PF_INET, SOCK_STREAM, 0);
+    if (*client_socket < 0) {
         printf("failed to get client socket\n");
         return false;
     }
@@ -46,16 +46,16 @@ static bool connect_to_stream_server_(char *server_ip, int port_num, int *client
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port_num);
 
-    if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+    if (connect(*client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         printf("connection failed\n");
         return false;
     } 
     return true;
 }
-
+*/
 static bool setup_stream_server(int *server_socket, int port_num) {
-    server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (server_socket < 0) {
+    *server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (*server_socket < 0) {
         printf("failed to get socket\n");
         return false;
     }
@@ -65,9 +65,9 @@ static bool setup_stream_server(int *server_socket, int port_num) {
     server_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST); 
     server_addr.sin_port = htons(port_num);
 
-    bind(server_socket, (struct sockaddr*)&server_addr,sizeof(server_addr));
+    bind(*server_socket, (struct sockaddr*)&server_addr,sizeof(server_addr));
 
-    if(listen(server_socket, 10) == -1){
+    if(listen(*server_socket, 10) == -1){
         printf("listen failed");
         return false;
     }
@@ -81,7 +81,7 @@ static bool setup_stream_server(int *server_socket, int port_num) {
 
 bool start_server() {
     //get socket
-    setup_stream_server(server_socket, display_port);
+    setup_stream_server(&server_socket, display_port);
     struct sockaddr_in display_addr;
     unsigned int display_size = sizeof(display_addr);
     display_socket = accept(server_socket, (struct sockaddr*)&display_addr, &display_size);

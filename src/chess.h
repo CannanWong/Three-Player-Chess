@@ -118,7 +118,7 @@ const int display_port = 500;
 void castling(coord_t, bool);
 char check_prom(coord_t);
 
-void start_server();
+bool start_server();
 bool receive_msg(char*, int);
 bool send_msg(char*, int);
 

@@ -2,7 +2,7 @@
 
 #define NAME_SIZE 16
 
-char device_ip[16] = {};
+char device_ip[16] = {0};
 
 unsigned short player_num(player_t *pl) {
     if (pl == &black_player) {
@@ -49,7 +49,7 @@ bool check_valid(piece_t *pc) {
 int main() {
     //int status = system("\"path\" width=640 height=480 isWindowedMode=true");
     strcpy(device_ip, get_local_ip());
-    if (device_ip == NULL) {
+    if (device_ip[0] == 'o') {
         return 0;
     }
     start_server();
