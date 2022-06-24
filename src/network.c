@@ -20,7 +20,7 @@
 
 int server_socket = 0;
 int display_socket = 0;
-const int display_port = 500;
+const int display_port = 5001;
 
 
 //=======================================================================================================
@@ -63,7 +63,7 @@ static bool setup_stream_server(int *server_socket, int port_num) {
     struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST); 
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY); 
     server_addr.sin_port = htons(port_num);
 
     bind(*server_socket, (struct sockaddr*)&server_addr,sizeof(server_addr));
