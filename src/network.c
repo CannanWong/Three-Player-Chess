@@ -90,7 +90,7 @@ bool start_server() {
 }
 
 bool close_display() {
-    char *msg_close_display;
+    char *msg_close_display = "close";
     if (send(display_socket, msg_close_display, sizeof(msg_close_display), 0) != sizeof(msg_close_display)) {
         printf("failed to request close display\n");
         return false;
