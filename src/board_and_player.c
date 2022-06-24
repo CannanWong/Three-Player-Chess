@@ -2,6 +2,11 @@
 #define MAX_PIECES 11
 
 const coord_t DEFAULT_COORD = {MAX_X, MAX_Y, &black_player};
+board_t board = {{{NULL}},{{NULL}},{{NULL}}};
+piece_t *current_piece = NULL;
+player_t *current_player = NULL;
+bool *moved_index = NULL;
+status game_status = GAME;
 
 player_t* adjacent(player_t *self, bool prev) {
   if (self == &black_player) {

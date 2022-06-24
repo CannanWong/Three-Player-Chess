@@ -1,11 +1,9 @@
 #include "chess.h"
 
+coord_t *curr_avail_moves = NULL;
+
 static bool is_valid(coord_t current_coord) {
     return (current_coord.x != MAX_X && current_coord.y != MAX_Y);
-}
-
-bool coord_equals(coord_t coord1, coord_t coord2) {
-    return coord1.belongs == coord2.belongs && coord1.x == coord2.x && coord1.y == coord2.y;
 }
 
 coord_t* show_avail_move(coord_t piece_coord) {

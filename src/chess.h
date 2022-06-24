@@ -113,7 +113,7 @@ char *get_local_ip();
 extern char device_ip[16];
 extern int server_socket;
 extern int display_socket;
-const int display_port = 500;
+extern const int display_port;
 
 void castling(coord_t, bool);
 char check_prom(coord_t);

@@ -9,6 +9,7 @@ PROGS   = all
 all: playchess
 
 playchess: playchess.o chess.o board_and_player.o during_game.o init.o terminate_game.o network.o 
+	gcc playchess.o chess.o board_and_player.o during_game.o init.o terminate_game.o network.o -o playchess
 
 playchess.o: chess.h
 
