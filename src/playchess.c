@@ -49,11 +49,16 @@ bool check_valid(piece_t *pc) {
 int main() {
     //int status = system("\"path\" width=640 height=480 isWindowedMode=true");
     strcpy(device_ip, get_local_ip());
+    /*
     if (device_ip[0] == 'o') {
         return 0;
     }
+    */
+        printf("%s\n", device_ip);
     start_server();
+        printf("server started\n");
     receive_msg(NULL, NAME_SIZE*sizeof(char));
+        printf("Start signal\n");
     char *names[MSG_SIZE] = {"Andy", "Jesh", "Jiaju"};
     init_players(names);
     while (1) {
