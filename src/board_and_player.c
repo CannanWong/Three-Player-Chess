@@ -187,40 +187,40 @@ piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt2, piece_t* 
 }
 
 piece_t* ask_prom() {
-    char msg[MSG_SIZE] = {8,0,0};
-    send_msg(msg, MSG_SIZE*sizeof(char));
-    receive_msg(msg, MSG_SIZE*sizeof(char));
-    player_t *pl;
-    switch(msg[1]) {
-      case (BLACK): pl = &black_player;
-      case (WHITE): pl = &white_player;
-      default:
-        assert(msg[1] == RED);
-        pl = &red_player;
+  char msg[MSG_SIZE] = {8,0,0};
+  send_msg(msg, MSG_SIZE*sizeof(char));
+  receive_msg(msg, MSG_SIZE*sizeof(char));
+
+  if (msg[0] == 5) {
+    return &default_piece;
+  }
+  
+  switch (msg[2]) {
+    case 0: return current_player->o_pawn;
+    case 1: return current_player->bishop;
+    case 2: return current_player->rook;
+    case 3: return current_player->knight;
+    default: {
+      assert(msg[2] == 4);
+      return current_player->queen;
     }
-    switch (msg[2]) {
-        case 0: return pl->o_pawn;
-        case 1: return pl->bishop;
-        case 2: return pl->rook;
-        case 3: return pl->knight;
-        default: {
-            assert(msg[2] == 4);
-            return pl->queen;
-        }
-    }
+  }
 }
 
-void check_prom(coord_t grid) {
+char check_prom(coord_t grid) {
   if (grid.y == 0) {
     if (current_piece->piece_color != grid.belongs->player_col) {
 
       piece_t *replace = ask_prom();
-      if (replace != NULL) {
+      if (replace != &default_piece) {
         set_piece(grid, replace);
         current_piece = replace;
+        return 'p';
       }
+      return 5;
     }
   }
+  return 'n';
 }
 
 void castling(coord_t king_orig, bool left) {

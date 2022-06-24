@@ -28,27 +28,14 @@ player_t* to_player(unsigned short code) {
     return &red_player;
 }
 
-coord_t send_recv_coord(bool send) {
-    coord_t pos;
-    char msg[MSG_SIZE] = {7,0,0};
-    if (send) {
-        send_msg(msg, MSG_SIZE*sizeof(char));
-    }
-    receive_msg(msg, MSG_SIZE*sizeof(char));
-    pos.x = msg[0];
-    pos.y = msg[1];
-    pos.belongs = to_player(msg[2]);
-    return pos;
-}
-
 bool send_avail_moves() {
     char msg[MAX_MOVES*MSG_SIZE];
     for (int i = 0; &curr_avail_moves[i]; i++) {
         coord_t pos = curr_avail_moves[i];
         unsigned short index = MSG_SIZE*i;
-        msg[index] = pos.x;
-        msg[index+1] = pos.y;
-        msg[index+2] = player_num(pos.belongs);
+        msg[index+1] = pos.x;
+        msg[index+2] = pos.y;
+        msg[index] = player_num(pos.belongs);
     }
     return send_msg(msg, MAX_MOVES*MSG_SIZE*sizeof(char));
 }
@@ -69,28 +56,9 @@ int main() {
         player_t *win1 = NULL;
         player_t *win2 = NULL;
         while (1) {
-            char msg_draw[1];
-            receive_msg(msg_draw, sizeof(char));
-            
             game_status = game_state(win1, win2);
             //check if game has ended
             if (game_status != GAME) {
-                //display game result
-                char msg_result[MSG_SIZE];
-                if (game_status == CHECKMATE) {
-                    msg_result[0] = 6;
-                    msg_result[1] = player_num(win1);
-                    msg_result[2] = player_num(win2);
-                } else {
-                    msg_result[0] = 5;
-                    if (game_status == STALEMATE) {
-                        msg_result[1] = 0;
-                    } else {
-                        assert (game_status == DRAW);
-                        msg_result[1] = 1;
-                    }
-                }
-                send_msg(msg_result, MSG_SIZE);
                 break;
             }
 
@@ -98,12 +66,35 @@ int main() {
             coord_t dest_grid;   
 
             while (1) {
-                orig_grid = send_recv_coord(true);
+                char msg_orig[MSG_SIZE] = {7,0,0};
+                send_msg(msg_orig, MSG_SIZE);
+                receive_msg(msg_orig, MSG_SIZE);
+
+                if (msg_orig[0] == 5) {
+                    game_status = DRAW;
+                    break;
+                }
+
+                orig_grid.belongs = to_player(msg_orig[0]);
+                orig_grid.x = msg_orig[1];
+                orig_grid.y = msg_orig[2];
+
                 current_piece = get_piece(orig_grid);
                 if (check_valid(current_piece)){
                     curr_avail_moves = show_avail_move(orig_grid);
                     send_avail_moves();
-                    dest_grid = send_recv_coord(false);
+
+                    char msg_dest[MSG_SIZE] = {7,0,0};
+                    receive_msg(msg_dest, MSG_SIZE);
+
+                    if (msg_dest[0] == 5) {
+                        game_status = DRAW;
+                        break;
+                    }
+
+                    dest_grid.belongs = to_player(msg_dest[0]);
+                    dest_grid.x = msg_dest[1];
+                    dest_grid.y = msg_dest[2];
 
                     if (movable(dest_grid, curr_avail_moves)) {
                         move_piece(orig_grid, dest_grid, NULL, NULL);
@@ -123,11 +114,34 @@ int main() {
                     }                   
                 }
             }
+            if (game_status == DRAW) {
+                draw();
+                break;
+            }
             next_player();
         }
+        //display game result
+        char msg_result[MSG_SIZE];
+        if (game_status == CHECKMATE) {
+            msg_result[0] = 6;
+            msg_result[1] = player_num(win1);
+            msg_result[2] = player_num(win2);
+        } else {
+            msg_result[0] = 5;
+            if (game_status == STALEMATE) {
+                msg_result[1] = 0;
+            } else {
+                assert(game_status == DRAW);
+                msg_result[1] = 1;
+            }
+        }
+        send_msg(msg_result, MSG_SIZE);
+
         //display scores
-        char msg_score[MSG_SIZE+1] = 
-        {1,black_player.score,white_player.score,red_player.score};
+        char bs = black_player.score;
+        char ws = white_player.score;
+        char rs = red_player.score;
+        char msg_score[MSG_SIZE+1] ={1,bs,ws,rs};
         send_msg(msg_score, MSG_SIZE+1);
 
         //continue next round or quit

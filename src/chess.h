@@ -109,7 +109,7 @@ piece_t* move_piece(coord_t, coord_t, bool*, bool*);
 piece_t* revert_move(coord_t, coord_t, bool, bool, piece_t*);
 
 void castling(coord_t, bool);
-void check_prom(coord_t);
+char check_prom(coord_t);
 
 void start_server();
 bool receive_msg(char*, int);
