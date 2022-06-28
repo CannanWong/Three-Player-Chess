@@ -15,7 +15,7 @@ player_t* adjacent(player_t *self, bool prev) {
     }
     return &white_player;
   }
-  if (self == &black_player) {
+  if (self == &white_player) {
     if (prev) {
       return &black_player;
     }
@@ -59,9 +59,11 @@ piece_t* get_piece(coord_t grid) {
 void set_piece(coord_t grid, piece_t* pc) {
   if (grid.belongs == &black_player) {
     board.black_region[grid.x][grid.y] = pc;
+    return;
   }
   if (grid.belongs == &white_player) {
     board.white_region[grid.x][grid.y] = pc;
+    return;
   }
   
   assert (grid.belongs == &red_player);
@@ -107,7 +109,11 @@ coord_t move_vector(bool x_first, coord_t orig, signed short dx, signed short dy
     dest = move_y(move_x(orig, dx, &in_boundary), dy, &in_boundary);
   } else {
     coord_t temp = move_y(orig, dy, &in_boundary);
-    dest = move_x(temp, -1 * dx, &in_boundary);
+    if (temp.belongs == orig.belongs) {
+      dest = move_x(temp, dx, &in_boundary);
+    } else {
+      dest = move_x(temp, -1 * dx, &in_boundary);
+    }
   }
   if (!in_boundary) {
     return DEFAULT_COORD;
