@@ -8,7 +8,7 @@
 #include <unistd.h>
 #define MAX_NAME_SIZE 128
 int main() {
-    int bc_port = 3890;
+    int bc_port = 41890;
     int bc_socket;
 
     char hostname[MAX_NAME_SIZE];

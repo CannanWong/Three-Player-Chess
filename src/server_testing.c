@@ -23,8 +23,8 @@ int main(void)
     }
  
   serv_addr.sin_family = AF_INET;
-  serv_addr.sin_port = htons(500);
-  serv_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST);//htonl(INADDR_ANY);
+  serv_addr.sin_port = htons(5001);
+  serv_addr.sin_addr.s_addr = htonl("146.149.163.72");//htonl(INADDR_ANY);
  
   if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
     {
