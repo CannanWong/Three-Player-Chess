@@ -14,7 +14,7 @@
 #define DIMENSION 2
 
 //Enumerations
-typedef enum {BLACK = 2, WHITE = 3, RED = 4, NO_COLOR = -1} color;
+typedef enum {BLACK = 4, WHITE = 2, RED = 3, NO_COLOR = -1} color;
 typedef enum {GAME = 0, CHECKMATE = 10, STALEMATE = 5, DRAW = 3} status;
 
 //=======================================================================================================
@@ -86,6 +86,7 @@ typedef struct coordinate {
 extern board_t board;
 extern unsigned short num_draw;
 extern const coord_t DEFAULT_COORD;
+extern const coord_t end_of_list;
 
 //======================================================================================================
 //Current state variables
@@ -104,9 +105,9 @@ player_t* get_player(color);
 bool coord_equals(coord_t, coord_t);
 coord_t move_vector(bool, coord_t, signed short, signed short);
 coord_t *show_avail_move(coord_t);
-bool movable(coord_t, coord_t*);
-piece_t* move_piece(coord_t, coord_t, bool*, bool*);
-piece_t* revert_move(coord_t, coord_t, bool, bool, piece_t*);
+bool movable(coord_t);
+piece_t* move_piece(coord_t, coord_t);
+//piece_t* revert_move(coord_t, coord_t, bool, bool, piece_t*);
 char *get_local_ip();
 
 
@@ -124,10 +125,13 @@ bool send_msg(char*, int);
 
 void terminate();
 void next_player();
+status draw();
+/*
 bool in_check();
 bool has_legal_moves();
-status draw();
+
 status game_state();
+*/
 bool displaced(coord_t);
 void close_game();
 

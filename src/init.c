@@ -5,12 +5,12 @@
 
 piece_t default_piece = {NO_COLOR, NULL};
 piece_type_t i_pawn_type = {true, {{0, 1}}};
-piece_type_t o_pawn_type = {true, {{0, -1}}};
+piece_type_t o_pawn_type = {true, {{0, -1}, {0, 0}}};
 piece_type_t knight_type = {true, {{1, 2}, {2, 1}, {1, -2}, {-2, 1}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
 piece_type_t king_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
 piece_type_t queen_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
-piece_type_t rook_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}}; 
-piece_type_t bishop_type = {false, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
+piece_type_t rook_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {0, 0}}}; 
+piece_type_t bishop_type = {false, {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {0, 0}}};
 
 //agree_draw, player_color, name, score, i_pawn, o_pawn, bishop, rook, knight, queen, king
 player_t black_player = {BLACK, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -41,6 +41,9 @@ static void init_player(player_t *current_player, char *name) {
     current_player->king = malloc(sizeof(piece_t));  
     current_player->king->piece_color = current_player->player_col; 
     current_player->king->type = &king_type;
+    for (int i = 0; i != 11; i++) {
+        current_player->has_moved[i] = false;
+    }
 }
 
 void init_players(char *player_names[NUM_OF_PLAYERS]) {
@@ -63,8 +66,8 @@ static void init_player_board(piece_t *current_board[MAX_X][MAX_Y], player_t *pl
     current_board[6][0] = player->knight;
     current_board[2][0] = player->bishop;
     current_board[5][0] = player->bishop;
-    current_board[4][0] = player->king;
-    current_board[3][0] = player->queen;
+    current_board[3][0] = player->king;
+    current_board[4][0] = player->queen;
 }
 
 void init_chess_boards() {

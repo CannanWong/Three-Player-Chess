@@ -36,6 +36,7 @@ player_t* get_player(color col) {
   if (col == WHITE) {
     return &white_player;
   }
+  printf("next player color: %d\n", col);
   assert (col == RED);
   return &red_player;
 }
@@ -121,6 +122,7 @@ coord_t move_vector(bool x_first, coord_t orig, signed short dx, signed short dy
   return dest;
 }
 
+
 bool* get_moved_index(coord_t grid, piece_t *pc) {
   unsigned short index = MAX_PIECES;
   player_t *pl = get_player(pc -> piece_color);
@@ -136,7 +138,7 @@ bool* get_moved_index(coord_t grid, piece_t *pc) {
         index = MAX_X;
       case (MAX_X-1): //Rook r
         index = MAX_X+1;
-      case 4: //King
+      case 3: //King
         index = MAX_X+2;
       default:
         index = MAX_PIECES; 
@@ -144,6 +146,11 @@ bool* get_moved_index(coord_t grid, piece_t *pc) {
     }
   }
   if (index < MAX_PIECES) {
+    if (pl->has_moved[index]){
+      printf("true\n");
+    } else {
+      printf("false\n");
+    }
     moved_index = &(pl -> has_moved[index]);
     return moved_index;
   }
@@ -152,18 +159,19 @@ bool* get_moved_index(coord_t grid, piece_t *pc) {
 
 bool displaced(coord_t grid) {
   get_moved_index(grid, current_piece);
-  return (moved_index != NULL || moved_index);
+  return (moved_index != NULL && *moved_index);
 }
 
-bool movable(coord_t dest, coord_t *avails) {
-  for(int i = 0; &avails[i]; i++) {
-    if (coord_equals(dest, avails[i])) {
+bool movable(coord_t dest) {
+  for(int i = 0; !coord_equals(curr_avail_moves[i], end_of_list); i++) {
+    if (coord_equals(dest, curr_avail_moves[i])) {
       return true;
     }
   }
   return false;
 }
 
+/*
 piece_t* move_piece(coord_t orig, coord_t dest, bool *alt_orig, bool *alt_dest) {
   if (alt_orig != NULL) {
     get_moved_index(orig, current_piece);
@@ -184,7 +192,27 @@ piece_t* move_piece(coord_t orig, coord_t dest, bool *alt_orig, bool *alt_dest) 
   set_piece(orig, &default_piece);
   return attacked;
 }
+*/
 
+piece_t* move_piece(coord_t orig, coord_t dest) {
+  get_moved_index(orig, current_piece);
+  if (moved_index != NULL && !*moved_index) {
+      *moved_index = true;
+  }
+  piece_t* attacked = get_piece(dest);
+  if (attacked != &default_piece) {
+    get_moved_index(dest, attacked);
+    if (moved_index != NULL && !*moved_index) {
+      *moved_index = true;
+    }
+  }
+  set_piece(dest, current_piece);
+  set_piece(orig, &default_piece);
+  return attacked;
+}
+
+
+/*
 piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt2, piece_t* attacked) {
   set_piece(orig, current_piece);
   set_piece(dest, attacked);
@@ -196,6 +224,7 @@ piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt2, piece_t* 
   }
   return current_piece;
 }
+*/
 
 piece_t* ask_prom() {
   char msg[MSG_SIZE] = {8,0,0};
@@ -238,16 +267,18 @@ void castling(coord_t king_orig, bool left) {
   if (left) {
     coord_t rook_orig = {0, 0, king_orig.belongs};
     coord_t rook_dest = {king_orig.x-1, 0,king_orig.belongs};
-    move_piece(rook_orig, rook_dest, NULL, NULL);
+    move_piece(rook_orig, rook_dest);
   } else  {
     coord_t rook_orig = {MAX_X-1, 0, king_orig.belongs};
     coord_t rook_dest = {king_orig.x+1,0,king_orig.belongs,};
-    move_piece(rook_orig, rook_dest, NULL, NULL);
+    move_piece(rook_orig, rook_dest);
   }
 }
 
 void next_player() {
+  printf("curr color: %d\n", current_player->player_col);
   current_player = adjacent(current_player, false);
+  printf("next color: %d\n", current_player->player_col);
   char msg[1] = {5};
   send_msg(msg, sizeof(char));
 }

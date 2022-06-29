@@ -2,22 +2,31 @@
 
 coord_t *curr_avail_moves = NULL;
 
+const coord_t end_of_list = {-1, -1, NULL};
+
 static bool is_valid(coord_t current_coord) {
-    return (current_coord.x != MAX_X && current_coord.y != MAX_Y);
+    return (current_coord.x < MAX_X && current_coord.y < MAX_Y) && (current_coord.x >= 0 && current_coord.y >= 0);
 }
 
 coord_t* show_avail_move(coord_t piece_coord) {
-    piece_t *current_piece = get_piece(piece_coord);
-    coord_t *return_corrds = calloc(64, sizeof(coord_t));
+    coord_t *return_corrds = malloc(64 * sizeof(coord_t));
     int num_of_moves = 0;
     short *current_vec = NULL; 
-    for (int i = 0; current_piece->type->move_vec[i]; i++) {
+
+    if (current_piece == NULL) {
+        printf("NUL\n");
+    }    
+
+    for (int i = 0; (current_piece->type->move_vec[i][0] != 0 || current_piece->type->move_vec[i][1] != 0) && i < 8; i++) {    
+        printf("%i %i\n", current_piece->type->move_vec[i][0], current_piece->type->move_vec[i][1]);
+        printf("%i\n", i);
         coord_t current_coord = piece_coord;
-        current_vec = current_piece->type->move_vec[0];
+        current_vec = current_piece->type->move_vec[i];
         coord_t buffer = move_vector(true, current_coord, current_vec[0], current_vec[1]);
+        printf("%i %i %i\n", buffer.belongs->player_col, buffer.x, buffer.y);
         bool change_boarder  = false;
         bool changed_once = false;
-        if (is_valid(buffer)) {            
+        if (is_valid(buffer)) {    
             //if piece is not knight, king or pawn
             if (!current_piece->type->single_move) {
                 while (is_valid(buffer) && get_piece(buffer) == NULL) {                
@@ -60,15 +69,21 @@ coord_t* show_avail_move(coord_t piece_coord) {
             }
         }
     }
+    printf("exit for loop\n");
     //first move from pawn can be 2 blocks
+
     if (!displaced(piece_coord)) {
+        printf("not displaced\n");
         if (current_piece->type == &i_pawn_type || current_piece->type == &o_pawn_type) {
+            printf("pawn double\n");
             coord_t buffer = move_vector(true, piece_coord, 0, current_piece->type->move_vec[0][1] * 2);
             if (is_valid(buffer)) {
+                printf("%d %d %d\n", buffer.belongs->player_col, buffer.x, buffer.y);
                 return_corrds[num_of_moves] = buffer;
                 num_of_moves++;   
             }
         } else if (current_piece->type == &king_type) {
+            printf("check castling\n");
             coord_t rook_l = {0, 0, piece_coord.belongs};
             coord_t rook_r = {0, MAX_X-1, piece_coord.belongs};
             if (!displaced(rook_l)) {
@@ -103,5 +118,8 @@ coord_t* show_avail_move(coord_t piece_coord) {
             }
         }
     }
+    return_corrds[num_of_moves] = end_of_list;
+    num_of_moves++;
+    printf("after not displaced\n");
     return return_corrds;
 }
