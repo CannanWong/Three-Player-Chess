@@ -72,16 +72,16 @@ void set_piece(coord_t grid, piece_t* pc) {
 }
 
 
-coord_t move_x(coord_t orig, signed short dx, bool* in_boundary) {
+coord_t move_x(coord_t orig, signed short dx) {
   unsigned short new_x = orig.x + dx;
   if(new_x < 0 || new_x >= MAX_X) { 
-    in_boundary = false;
+    return DEFAULT_COORD;
   }
   coord_t dest = {new_x, orig.y, orig.belongs};
   return dest;
 }
 
-coord_t move_y(coord_t orig, signed short dy, bool* in_boundary) {
+coord_t move_y(coord_t orig, signed short dy) {
   coord_t dest;
   unsigned short new_y = orig.y + dy;
   if (new_y < MAX_Y) {
@@ -98,30 +98,34 @@ coord_t move_y(coord_t orig, signed short dy, bool* in_boundary) {
     dest.x = MAX_X - 1 - orig.x;
   }
   if (new_y < 0 || new_y >= 2 * MAX_Y) {
-    in_boundary = false;
+    return DEFAULT_COORD;
   }
   return dest;
 }
 
 coord_t move_vector(bool x_first, coord_t orig, signed short dx, signed short dy) {
   coord_t dest;
-  bool in_boundary = true;
+  coord_t temp;
+  
   if (x_first) {
-    dest = move_y(move_x(orig, dx, &in_boundary), dy, &in_boundary);
+    temp = move_x(orig, dx);
+    if (coord_equals(temp, DEFAULT_COORD)) {
+      return DEFAULT_COORD;
+    }
+    dest = move_y(orig, dy);
   } else {
-    coord_t temp = move_y(orig, dy, &in_boundary);
+    temp = move_y(orig, dy);
+    if (coord_equals(temp, DEFAULT_COORD)) {
+      return DEFAULT_COORD;
+    }
     if (temp.belongs == orig.belongs) {
       dest = move_x(temp, dx, &in_boundary);
     } else {
       dest = move_x(temp, -1 * dx, &in_boundary);
     }
   }
-  if (!in_boundary) {
-    return DEFAULT_COORD;
-  }
   return dest;
 }
-
 
 bool* get_moved_index(coord_t grid, piece_t *pc) {
   unsigned short index = MAX_PIECES;
