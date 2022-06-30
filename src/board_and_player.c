@@ -72,7 +72,7 @@ void set_piece(coord_t grid, piece_t* pc) {
 }
 
 
-coord_t move_x(coord_t orig, signed short dx) {
+static coord_t move_x(coord_t orig, signed short dx) {
   unsigned short new_x = orig.x + dx;
   if(new_x < 0 || new_x >= MAX_X) { 
     return DEFAULT_COORD;
@@ -81,7 +81,7 @@ coord_t move_x(coord_t orig, signed short dx) {
   return dest;
 }
 
-coord_t move_y(coord_t orig, signed short dy) {
+static coord_t move_y(coord_t orig, signed short dy) {
   coord_t dest;
   unsigned short new_y = orig.y + dy;
   if (new_y < MAX_Y) {
@@ -112,7 +112,7 @@ coord_t move_vector(bool x_first, coord_t orig, signed short dx, signed short dy
     if (coord_equals(temp, DEFAULT_COORD)) {
       return DEFAULT_COORD;
     }
-    dest = move_y(orig, dy);
+    dest = move_y(temp, dy);
   } else {
     temp = move_y(orig, dy);
     if (coord_equals(temp, DEFAULT_COORD)) {
@@ -151,9 +151,9 @@ bool* get_moved_index(coord_t grid, piece_t *pc) {
   }
   if (index < MAX_PIECES) {
     if (pl->has_moved[index]){
-      printf("true\n");
+      printf("has moved: true\n");
     } else {
-      printf("false\n");
+      printf("has moved: false\n");
     }
     moved_index = &(pl -> has_moved[index]);
     return moved_index;
@@ -211,8 +211,8 @@ piece_t* move_piece(coord_t orig, coord_t dest) {
     }
   }
   set_piece(dest, current_piece);
-  if (current_piece->type == &i_pawn_type) {
-    current_piece->type = &o_pawn_type;
+  if (current_piece->type == &i_pawn_type && dest.belongs != orig.belongs) {
+    set_piece(dest, current_player->o_pawn);
   }
   set_piece(orig, &default_piece);
   
@@ -234,7 +234,7 @@ piece_t* revert_move(coord_t orig, coord_t dest, bool alt1, bool alt2, piece_t* 
 }
 */
 
-piece_t* ask_prom() {
+static piece_t* ask_prom() {
   char msg[MSG_SIZE] = {8,0,0};
   send_msg(msg, MSG_SIZE*sizeof(char));
   receive_msg(msg, MSG_SIZE*sizeof(char));
@@ -284,7 +284,6 @@ void castling(coord_t king_orig, bool left) {
 }
 
 void next_player() {
-  printf("curr color: %d\n", current_player->player_col);
   current_player = adjacent(current_player, false);
   printf("next color: %d\n", current_player->player_col);
   char msg[1] = {5};

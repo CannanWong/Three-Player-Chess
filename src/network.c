@@ -105,7 +105,7 @@ bool receive_msg(char *msg, int size) {
 }
 
 bool send_msg(char *msg, int size) {
-    printf("sending: %i %i %i\n", msg[0], msg[1], msg[2]);
+    //printf("sending: %i %i %i\n", msg[0], msg[1], msg[2]);
     //printf("sending: %i %i %i\n", msg[3], msg[4], msg[5]);
     return (send(display_socket, msg, size, 0)) != size;
 }

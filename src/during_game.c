@@ -21,12 +21,12 @@ coord_t* show_avail_move(coord_t piece_coord) {
         if (dx == 0 && dy == 0) {
             break;
         } 
-        printf("%i %i\n", dx, dy);
+        printf("vector: %i, %i\n", dx, dy);
         coord_t current_coord = piece_coord;
         coord_t alt_loc = move_vector(false, current_coord, dx, dy);
         coord_t buffer = move_vector(true, current_coord, dx, dy);
-        printf("%i %i %i\n", buffer.belongs->player_col, buffer.x, buffer.y);
-        bool changed_once = false;\
+        printf("dest: %i %i %i\n", buffer.belongs->player_col, buffer.x, buffer.y);
+        bool changed_once = false;
         bool alt_select = false;
 
         if (!coord_equals(buffer, DEFAULT_COORD)) {    
@@ -81,7 +81,7 @@ coord_t* show_avail_move(coord_t piece_coord) {
                 }  
             }
 
-            if (!coord_equals(alt_loc, DEFAULT_COORD) && 
+            if (!coord_equals(alt_loc, DEFAULT_COORD) && !coord_equals(alt_loc, buffer) &&
             (alt_pc == &default_piece ||
             alt_pc->piece_color != current_piece->piece_color)) {
                 if ((current_piece->type == &i_pawn_type 
