@@ -4,32 +4,36 @@ coord_t *curr_avail_moves = NULL;
 
 const coord_t end_of_list = {-1, -1, NULL};
 
-static bool is_valid(coord_t current_coord) {
-    return (current_coord.x < MAX_X && current_coord.y < MAX_Y) && (current_coord.x >= 0 && current_coord.y >= 0);
-}
-
 coord_t* show_avail_move(coord_t piece_coord) {
     coord_t *return_corrds = malloc(64 * sizeof(coord_t));
     int num_of_moves = 0;
-    short *current_vec = NULL; 
 
     if (current_piece == NULL) {
         printf("NUL\n");
-    }    
+    }   
 
-    for (int i = 0; (current_piece->type->move_vec[i][0] != 0 || current_piece->type->move_vec[i][1] != 0) && i < 8; i++) {    
-        printf("%i %i\n", current_piece->type->move_vec[i][0], current_piece->type->move_vec[i][1]);
-        printf("%i\n", i);
+    short dx;
+    short dy; 
+
+    for (int i = 0; i < 8; i++) {
+        dx = current_piece->type->move_vec[i][0];
+        dy = current_piece->type->move_vec[i][1];
+        if (dx == 0 && dy == 0) {
+            break;
+        } 
+        printf("%i %i\n", dx, dy);
         coord_t current_coord = piece_coord;
-        current_vec = current_piece->type->move_vec[i];
-        coord_t buffer = move_vector(true, current_coord, current_vec[0], current_vec[1]);
+        coord_t alt_loc = move_vector(false, current_coord, dx, dy);
+        coord_t buffer = move_vector(true, current_coord, dx, dy);
         printf("%i %i %i\n", buffer.belongs->player_col, buffer.x, buffer.y);
         bool change_boarder  = false;
         bool changed_once = false;
-        if (is_valid(buffer)) {    
+        bool alt_select = false;
+
+        if (!coord_equals(buffer, DEFAULT_COORD)) {    
             //if piece is not knight, king or pawn
             if (!current_piece->type->single_move) {
-                while (is_valid(buffer) && get_piece(buffer) == NULL) {                
+                while (!coord_equals(buffer, DEFAULT_COORD) && get_piece(buffer) == &default_piece) {                
                     return_corrds[num_of_moves] = buffer;
                     num_of_moves++;
                     if (!changed_once) {
@@ -39,32 +43,65 @@ coord_t* show_avail_move(coord_t piece_coord) {
                             if (current_piece->type == &i_pawn_type) {
                                 current_piece->type = &o_pawn_type;
                             }
-                            buffer = move_vector(false, current_coord, current_vec[0], current_vec[1]);
-                            if (!coord_equals(buffer, return_corrds[num_of_moves - 1])) {
-                                return_corrds[num_of_moves] = buffer;
-                                num_of_moves++;   
+                            if (!alt_select) {
+                                buffer = move_vector(false, current_coord, dx, dy);
+                                if (!coord_equals(buffer, return_corrds[num_of_moves - 1])) {
+                                    if (get_piece(buffer) == &default_piece) {
+                                        alt_loc = buffer;
+                                        alt_select = true;
+                                    }
+                                }
                             }
-                    }
-                    }
-                    current_coord = return_corrds[num_of_moves - 1];
-                    if (changed_once) {
-                        buffer = move_vector(true, current_coord, current_vec[0] * -1, current_vec[1] * -1);  
-                    }
-                }
-                //attack opponent piece
-            }                
-            if (is_valid(buffer) && get_piece(buffer)->piece_color != current_piece->piece_color) {
-                return_corrds[num_of_moves] = buffer;
-                num_of_moves++;  
-                if (!changed_once) {
-                    change_boarder = buffer.belongs != current_coord.belongs;
-                    if (change_boarder) {
-                        buffer = move_vector(false, current_coord, current_vec[0], current_vec[1]);
-                        if (!coord_equals(buffer, return_corrds[num_of_moves - 1])) {
-                            return_corrds[num_of_moves] = buffer;
-                            num_of_moves++;   
                         }
                     }
+                    //update
+                    current_coord = return_corrds[num_of_moves - 1];
+                    if (changed_once) {
+                        buffer = move_vector(true, current_coord, dx * -1, dy * -1);  
+                    } else {
+                        buffer = move_vector(true, current_coord, dx, dy);
+                    }
+                }
+            }   
+
+            if (alt_select) {
+                while (!coord_equals(alt_loc, DEFAULT_COORD) && get_piece(alt_loc) == &default_piece) {
+                    return_corrds[num_of_moves] = alt_loc;
+                    num_of_moves++;
+                    alt_loc = move_vector(false, alt_loc, dx * -1, dy * -1);
+                }
+            }
+
+            //both single and multiple moves
+            piece_t *dest_pc = get_piece(buffer);
+            piece_t *alt_pc = get_piece(alt_loc);
+            if (!coord_equals(buffer, DEFAULT_COORD) && 
+            (dest_pc == &default_piece ||
+            dest_pc->piece_color != current_piece->piece_color)) {
+                if ((current_piece->type == &i_pawn_type 
+                || current_piece->type == &o_pawn_type) && dx != 0) {
+                    if (dest_pc != &default_piece) {
+                        return_corrds[num_of_moves] = buffer;
+                        num_of_moves++;
+                    }
+                }else {
+                    return_corrds[num_of_moves] = buffer;
+                    num_of_moves++;
+                }  
+            }
+
+            if (!coord_equals(alt_loc, DEFAULT_COORD) && 
+            (alt_pc == &default_piece ||
+            alt_pc->piece_color != current_piece->piece_color)) {
+                if ((current_piece->type == &i_pawn_type 
+                || current_piece->type == &o_pawn_type) && dx != 0) {
+                    if (dx != 0 && dy != 0 && alt_pc != &default_piece) {
+                        return_corrds[num_of_moves] = alt_loc;
+                        num_of_moves++;
+                    }
+                } else {
+                    return_corrds[num_of_moves] = alt_loc;
+                    num_of_moves++;
                 }
             }
         }
@@ -77,7 +114,7 @@ coord_t* show_avail_move(coord_t piece_coord) {
         if (current_piece->type == &i_pawn_type || current_piece->type == &o_pawn_type) {
             printf("pawn double\n");
             coord_t buffer = move_vector(true, piece_coord, 0, current_piece->type->move_vec[0][1] * 2);
-            if (is_valid(buffer)) {
+            if (!coord_equals(buffer, DEFAULT_COORD)) {
                 printf("%d %d %d\n", buffer.belongs->player_col, buffer.x, buffer.y);
                 return_corrds[num_of_moves] = buffer;
                 num_of_moves++;   

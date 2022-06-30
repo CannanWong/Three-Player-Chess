@@ -119,9 +119,9 @@ coord_t move_vector(bool x_first, coord_t orig, signed short dx, signed short dy
       return DEFAULT_COORD;
     }
     if (temp.belongs == orig.belongs) {
-      dest = move_x(temp, dx, &in_boundary);
+      dest = move_x(temp, dx);
     } else {
-      dest = move_x(temp, -1 * dx, &in_boundary);
+      dest = move_x(temp, -1 * dx);
     }
   }
   return dest;

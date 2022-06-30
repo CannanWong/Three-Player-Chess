@@ -4,8 +4,8 @@
 #define MAX_NAME_SIZE 32
 
 piece_t default_piece = {NO_COLOR, NULL};
-piece_type_t i_pawn_type = {true, {{0, 1}}};
-piece_type_t o_pawn_type = {true, {{0, -1}, {0, 0}}};
+piece_type_t i_pawn_type = {true, {{0, 1}, {-1, 1}, {1, 1}, {0, 0}}};
+piece_type_t o_pawn_type = {true, {{0, -1}, {-1, -1}, {1, -1}, {0, 0}}};
 piece_type_t knight_type = {true, {{1, 2}, {2, 1}, {1, -2}, {-2, 1}, {-1, 2}, {2, -1}, {-1, -2}, {-2, -1}}};
 piece_type_t king_type = {true, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
 piece_type_t queen_type = {false, {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}};
