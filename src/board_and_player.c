@@ -36,7 +36,6 @@ player_t* get_player(color col) {
   if (col == WHITE) {
     return &white_player;
   }
-  printf("next player color: %d\n", col);
   assert (col == RED);
   return &red_player;
 }
@@ -149,12 +148,9 @@ bool* get_moved_index(coord_t grid, piece_t *pc) {
       }
     }
   }
-  printf(",crsp moved index: %d\n", index);
   if (index < MAX_PIECES) {
     if (pl->has_moved[index]){
-      printf("has moved: true\n");
-    } else {
-      printf("has moved: false\n");
+      printf("has moved:\n");
     }
     moved_index = &(pl -> has_moved[index]);
     return moved_index;
@@ -286,7 +282,7 @@ void castling(coord_t king_orig, bool left) {
 
 void next_player() {
   current_player = adjacent(current_player, false);
-  printf("next color: %d\n", current_player->player_col);
+  printf("==next color: %d==\n", current_player->player_col);
   char msg[1] = {5};
   send_msg(msg, sizeof(char));
 }

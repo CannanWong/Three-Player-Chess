@@ -42,14 +42,13 @@ bool send_avail_moves() {
         index += MSG_SIZE;
     }
     msg[index] = 5;
-    printf("index:%d\nmessage sent:%s\n",index, msg);
     return send_msg(msg, MAX_MOVES*MSG_SIZE*sizeof(char)+1);
 }
 
 bool check_valid(piece_t *pc) {
     bool val = (pc != &default_piece && pc->piece_color == current_player->player_col);
     if (!val) {
-        printf("invalid location, please reselect\n");
+        printf("invalid location\n");
     }
     return val;
 }
@@ -64,10 +63,9 @@ int main() {
     */
         printf("%s\n", device_ip);
     start_server();
-        printf("server started\n");
         char c[20];
     receive_msg(c, 20);
-        printf("start signal: %c, %c\n", c[0], c[3]);
+        printf("====start game====\n");
     char *names[MSG_SIZE] = {"Andy", "Jesh", "Jiaju"};
     init_players(names);
     while (1) {
@@ -97,26 +95,25 @@ int main() {
 
                 if (msg_orig[0] == 5) {
                     game_status = DRAW;
-                    printf("--draw--\n");
+                    printf("====draw====\n");
                     break;
                 }
-                printf("--origin--: %d,%d,%d\n",msg_orig[0],msg_orig[1],msg_orig[2]);
+                printf("origin: %d,%d,%d\n",msg_orig[0],msg_orig[1],msg_orig[2]);
                 orig_grid.belongs = to_player(msg_orig[0]);
                 orig_grid.x = msg_orig[1];
                 orig_grid.y = msg_orig[2];
 
                 current_piece = get_piece(orig_grid);
                 if (check_valid(current_piece)){
-                    printf("--valid loc--\n");
                     curr_avail_moves = show_avail_move(orig_grid);
                     send_avail_moves();
                     char msg_dest[MSG_SIZE] = {7,0,0};
                     receive_msg(msg_dest, MSG_SIZE);
-                    printf("--user selected move: %s,%d,%d,%d\n", msg_dest, msg_dest[0],msg_dest[1],msg_dest[2]);
+                    printf("user selected move: %s,%d,%d,%d\n", msg_dest, msg_dest[0],msg_dest[1],msg_dest[2]);
 
                     if (msg_dest[0] == 5) {
                         game_status = DRAW;
-                        printf("draw\n");
+                        printf("====draw====\n");
                         break;
                     }
 
@@ -125,12 +122,11 @@ int main() {
                     dest_grid.y = msg_dest[2];
 
                     if (movable(dest_grid)) {
-                        printf("--movable--\n");
                         piece_t *attcked = move_piece(orig_grid, dest_grid);
                         if (attcked != &default_piece) {
                             if (attcked->type == &king_type) {
                                 game_status = CHECKMATE;
-                                printf("Checkmate\n");
+                                printf("====Checkmate====\n");
                                 winner = get_player(current_piece->piece_color);
                                 winner->score += CHECKMATE/10;
                                 checked = get_player(attcked->piece_color);
@@ -167,7 +163,6 @@ int main() {
                 break;
             }
             next_player();
-            printf("===next player===\n");
         }
         //display game result
         char msg_result[MSG_SIZE];

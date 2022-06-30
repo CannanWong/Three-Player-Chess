@@ -21,11 +21,9 @@ coord_t* show_avail_move(coord_t piece_coord) {
         if (dx == 0 && dy == 0) {
             break;
         } 
-        printf("vector: %i, %i\n", dx, dy);
         coord_t current_coord = piece_coord;
         coord_t alt_loc = move_vector(false, current_coord, dx, dy);
         coord_t buffer = move_vector(true, current_coord, dx, dy);
-        printf("dest: %i %i %i\n", buffer.belongs->player_col, buffer.x, buffer.y);
         bool changed_once = false;
         bool alt_select = false;
 
@@ -97,16 +95,12 @@ coord_t* show_avail_move(coord_t piece_coord) {
             }
         }
     }
-    printf("exit for loop\n");
-    //first move from pawn can be 2 blocks
 
     if (!displaced(piece_coord)) {
-        printf("not displaced\n");
         if (current_piece->type == &i_pawn_type || current_piece->type == &o_pawn_type) {
             printf("pawn double\n");
             coord_t buffer = move_vector(true, piece_coord, 0, current_piece->type->move_vec[0][1] * 2);
             if (!coord_equals(buffer, DEFAULT_COORD)) {
-                printf("%d %d %d\n", buffer.belongs->player_col, buffer.x, buffer.y);
                 return_corrds[num_of_moves] = buffer;
                 num_of_moves++;   
             }
@@ -148,6 +142,5 @@ coord_t* show_avail_move(coord_t piece_coord) {
     }
     return_corrds[num_of_moves] = end_of_list;
     num_of_moves++;
-    printf("after not displaced\n");
     return return_corrds;
 }
