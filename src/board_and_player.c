@@ -149,6 +149,7 @@ bool* get_moved_index(coord_t grid, piece_t *pc) {
       }
     }
   }
+  printf(",crsp moved index: %d\n", index);
   if (index < MAX_PIECES) {
     if (pl->has_moved[index]){
       printf("has moved: true\n");
@@ -163,7 +164,7 @@ bool* get_moved_index(coord_t grid, piece_t *pc) {
 
 bool displaced(coord_t grid) {
   get_moved_index(grid, current_piece);
-  return (moved_index != NULL && *moved_index);
+  return (moved_index == NULL || *moved_index);
 }
 
 bool movable(coord_t dest) {
