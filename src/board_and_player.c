@@ -211,7 +211,11 @@ piece_t* move_piece(coord_t orig, coord_t dest) {
     }
   }
   set_piece(dest, current_piece);
+  if (current_piece->type == &i_pawn_type) {
+    current_piece->type = &o_pawn_type;
+  }
   set_piece(orig, &default_piece);
+  
   return attacked;
 }
 

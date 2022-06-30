@@ -26,8 +26,7 @@ coord_t* show_avail_move(coord_t piece_coord) {
         coord_t alt_loc = move_vector(false, current_coord, dx, dy);
         coord_t buffer = move_vector(true, current_coord, dx, dy);
         printf("%i %i %i\n", buffer.belongs->player_col, buffer.x, buffer.y);
-        bool change_boarder  = false;
-        bool changed_once = false;
+        bool changed_once = false;\
         bool alt_select = false;
 
         if (!coord_equals(buffer, DEFAULT_COORD)) {    
@@ -37,30 +36,22 @@ coord_t* show_avail_move(coord_t piece_coord) {
                     return_corrds[num_of_moves] = buffer;
                     num_of_moves++;
                     if (!changed_once) {
-                        change_boarder = buffer.belongs != current_coord.belongs;
-                        if (change_boarder) {
+                        if (buffer.belongs != current_coord.belongs) {
                             changed_once = true;
-                            if (current_piece->type == &i_pawn_type) {
-                                current_piece->type = &o_pawn_type;
-                            }
                             if (!alt_select) {
                                 buffer = move_vector(false, current_coord, dx, dy);
                                 if (!coord_equals(buffer, return_corrds[num_of_moves - 1])) {
-                                    if (get_piece(buffer) == &default_piece) {
-                                        alt_loc = buffer;
-                                        alt_select = true;
-                                    }
+                                    alt_loc = buffer;
+                                    alt_select = true;
                                 }
                             }
+                            dx *= -1;
+                            dy *= -1;
                         }
                     }
                     //update
                     current_coord = return_corrds[num_of_moves - 1];
-                    if (changed_once) {
-                        buffer = move_vector(true, current_coord, dx * -1, dy * -1);  
-                    } else {
-                        buffer = move_vector(true, current_coord, dx, dy);
-                    }
+                    buffer = move_vector(true, current_coord, dx, dy);
                 }
             }   
 
@@ -68,7 +59,7 @@ coord_t* show_avail_move(coord_t piece_coord) {
                 while (!coord_equals(alt_loc, DEFAULT_COORD) && get_piece(alt_loc) == &default_piece) {
                     return_corrds[num_of_moves] = alt_loc;
                     num_of_moves++;
-                    alt_loc = move_vector(false, alt_loc, dx * -1, dy * -1);
+                    alt_loc = move_vector(false, alt_loc, dx, dy);
                 }
             }
 
