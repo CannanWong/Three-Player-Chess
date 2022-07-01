@@ -67,13 +67,13 @@ coord_t* show_avail_move(coord_t piece_coord) {
             if (!coord_equals(buffer, DEFAULT_COORD) && 
             (dest_pc == &default_piece ||
             dest_pc->piece_color != current_piece->piece_color)) {
-                if ((current_piece->type == &i_pawn_type 
-                || current_piece->type == &o_pawn_type) && dx != 0) {
-                    if (dest_pc != &default_piece) {
+                if (current_piece->type == &i_pawn_type || current_piece->type == &o_pawn_type){
+                    if ((dx != 0 && dest_pc != &default_piece) 
+                    || (dx == 0 && dest_pc == &default_piece)) {
                         return_corrds[num_of_moves] = buffer;
                         num_of_moves++;
                     }
-                }else {
+                } else {
                     return_corrds[num_of_moves] = buffer;
                     num_of_moves++;
                 }  
@@ -82,13 +82,13 @@ coord_t* show_avail_move(coord_t piece_coord) {
             if (!coord_equals(alt_loc, DEFAULT_COORD) && !coord_equals(alt_loc, buffer) &&
             (alt_pc == &default_piece ||
             alt_pc->piece_color != current_piece->piece_color)) {
-                if ((current_piece->type == &i_pawn_type 
-                || current_piece->type == &o_pawn_type) && dx != 0) {
-                    if (dx != 0 && dy != 0 && alt_pc != &default_piece) {
+                if (current_piece->type == &i_pawn_type || current_piece->type == &o_pawn_type){
+                    if ((dx != 0 && alt_pc != &default_piece) 
+                    || (dx == 0 && alt_pc == &default_piece)) {
                         return_corrds[num_of_moves] = alt_loc;
                         num_of_moves++;
                     }
-                } else {
+                }  else {
                     return_corrds[num_of_moves] = alt_loc;
                     num_of_moves++;
                 }

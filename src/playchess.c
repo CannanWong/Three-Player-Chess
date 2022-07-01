@@ -33,9 +33,10 @@ player_t* to_player(unsigned short code) {
 bool send_avail_moves() {
     char msg[MAX_MOVES*MSG_SIZE+1] = "";
     unsigned int index = 0;
+    printf("all available moves:\n");
     for (int i = 0; !coord_equals(curr_avail_moves[i], end_of_list); i++) {
         coord_t pos = curr_avail_moves[i];
-        printf(" avail %i, %i %i %i\n", i, pos.belongs->player_col, pos.x, pos.y);
+        printf(" option %i: %i %i %i\n", i+1, pos.belongs->player_col, pos.x, pos.y);
         msg[index+1] = pos.x;
         msg[index+2] = pos.y;
         msg[index] = player_num(pos.belongs);
@@ -65,7 +66,7 @@ int main() {
     start_server();
         char c[20];
     receive_msg(c, 20);
-        printf("====start game====\n");
+        printf("====Start game====\n");
     char *names[MSG_SIZE] = {"Andy", "Jesh", "Jiaju"};
     init_players(names);
     while (1) {
@@ -109,7 +110,7 @@ int main() {
                     send_avail_moves();
                     char msg_dest[MSG_SIZE] = {7,0,0};
                     receive_msg(msg_dest, MSG_SIZE);
-                    printf("user selected move: %s,%d,%d,%d\n", msg_dest, msg_dest[0],msg_dest[1],msg_dest[2]);
+                    printf("user selected move: %d,%d,%d\n",msg_dest[0],msg_dest[1],msg_dest[2]);
 
                     if (msg_dest[0] == 5) {
                         game_status = DRAW;
@@ -124,9 +125,10 @@ int main() {
                     if (movable(dest_grid)) {
                         piece_t *attcked = move_piece(orig_grid, dest_grid);
                         if (attcked != &default_piece) {
+                            printf("-attack piece!-\n");
                             if (attcked->type == &king_type) {
                                 game_status = CHECKMATE;
-                                printf("====Checkmate====\n");
+                                printf("====Checkmate!!====\n");
                                 winner = get_player(current_piece->piece_color);
                                 winner->score += CHECKMATE/10;
                                 checked = get_player(attcked->piece_color);
