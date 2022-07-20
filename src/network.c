@@ -31,7 +31,7 @@ char *get_local_ip() {
     struct hostent *local_info;
     gethostname(buffer, sizeof(buffer));
     local_info = gethostbyname(buffer);
-    return inet_ntoa(*((struct in_addr*)local_info->h_addr_list[0]));
+    return inet_ntoa(*((struct in_addr*)local_info->h_addr_list[1]));
 }
 /*
 static bool connect_to_stream_server_(char *server_ip, int port_num, int *client_socket) {
